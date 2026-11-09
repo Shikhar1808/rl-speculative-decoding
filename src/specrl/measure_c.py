@@ -1,8 +1,9 @@
 """Measure c = t_draft / t_target on this GPU (docs/02_mdp.md).
 
-t_draft  = one draft decode step (1 new token, KV cache)
-t_target = one target verify pass (5 tokens at once, KV cache) — about what a round sends
-Both measured after a ~200-token context, 3 warm-ups, CUDA-synchronised, median of N runs.
+t_draft  = one draft decode step (1 new token)
+t_target = one target verify pass (5 tokens at once) — about what a round sends
+Both measured the way the live loop runs them (GraphRunner: StaticCache + CUDA graphs), after a ~200-token
+context, 3 warm-ups, CUDA-synchronised, median of 30 runs. The eager (no-graph) times are saved too.
 
 Usage:
     uv run python -m specrl.measure_c --pair qwen
@@ -20,6 +21,8 @@ from transformers import DynamicCache
 from specrl.config import PAIRS, RESULTS_DIR
 from specrl.log_data import encode, load_pair
 from specrl.prompts import load_prompts
+from specrl.fastmodel import GraphRunner
+from specrl.specdec import crop_to
 
 
 @torch.no_grad()
@@ -36,7 +39,23 @@ def time_step(model, ctx, n_new, runs=30):
         torch.cuda.synchronize()
         if i >= 3:
             times.append(time.perf_counter() - t0)
-        cache.crop(L)  # roll back so every run sees the same context length
+        crop_to(cache, L)  # roll back so every run sees the same context length
+    return statistics.median(times)
+
+
+@torch.no_grad()
+def time_graph(runner, ctx, n_new, runs=30):
+    L = ctx.shape[1]
+    runner.reset().logits(ctx[:, : L - n_new])  # prefill, then time the n_new-token step from the same point
+    times = []
+    for i in range(runs + 3):
+        runner.crop(L - n_new)
+        torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        runner.logits(ctx)
+        torch.cuda.synchronize()
+        if i >= 3:
+            times.append(time.perf_counter() - t0)
     return statistics.median(times)
 
 
@@ -48,15 +67,18 @@ def main():
     tok, draft, target = load_pair(a.pair)
     ctx = encode(tok, load_prompts("train")[0]["text"])
     ctx = torch.cat([ctx] * (1 + 200 // ctx.shape[1]), 1)[:, :200]
-    t_d = time_step(draft, ctx, 1)
-    t_t = time_step(target, ctx, a.verify_len)
-    t_t1 = time_step(target, ctx, 1)
+    eager = {"draft": time_step(draft, ctx, 1), "target": time_step(target, ctx, a.verify_len)}
+    gd, gt = GraphRunner(draft), GraphRunner(target)
+    t_d, t_t, t_t1 = time_graph(gd, ctx, 1), time_graph(gt, ctx, a.verify_len), time_graph(gt, ctx, 1)
     res = {
         "pair": a.pair,
         "t_draft_ms": t_d * 1e3,
         "t_target_ms": t_t * 1e3,
         "t_target_1tok_ms": t_t1 * 1e3,
         "c": t_d / t_t,
+        "eager_t_draft_ms": eager["draft"] * 1e3,
+        "eager_t_target_ms": eager["target"] * 1e3,
+        "eager_c": eager["draft"] / eager["target"],
         "gpu": torch.cuda.get_device_name(0),
     }
     print(json.dumps(res, indent=2))
