@@ -23,12 +23,14 @@ uv run python -c "import torch; print(torch.cuda.is_available())"   # must print
 
 | Step | Command | Runs on | Output |
 |---|---|---|---|
-| 1. Log model outputs | *(P1, not built yet)* | GPU | `logs/*.npz` |
-| 2. Simulator + baselines | *(P2)* | CPU | baseline table |
-| 3. Train agents | *(P4–P5)* | CPU | `policies/` |
-| 4. Live benchmark | *(P6)* | GPU | `results/*.csv` |
-| 5. Figures | *(P7)* | CPU | `figures/` |
-| 6. Demo | *(P8)* | GPU | Gradio app |
+| 0. Build prompts (done, committed) | `uv run python -m specrl.prompts` | CPU | `data/prompts.jsonl` |
+| 1. Log model outputs | `uv run python -m specrl.log_data --pair qwen` | GPU | `logs/*.npz` |
+| 2. Measure c | `uv run python -m specrl.measure_c --pair qwen` | GPU | `results/c_qwen.json` |
+| 3. Sim baselines | `uv run python -m specrl.baselines --pair qwen --c <c>` | CPU | `results/sim_baselines_*.csv` |
+| 4. Train agents | *(P4–P5)* | CPU | `policies/` |
+| 5. Live benchmark | *(P6)* | GPU | `results/*.csv` |
+| 6. Figures | *(P7)* | CPU | `figures/` |
+| 7. Demo | *(P8)* | GPU | Gradio app |
 
 This table is filled in as each phase lands.
 
@@ -48,6 +50,8 @@ results/ figures/       generated, committed (the report uses them)
 | Page | Covers |
 |---|---|
 | [01_setup.md](docs/01_setup.md) | Install on a new PC, CUDA check |
+| [02_mdp.md](docs/02_mdp.md) | State, actions, reward, c, λ, sim speedup |
+| [03_simulator.md](docs/03_simulator.md) | Prompts, logging, simulator, baselines |
 | [07_report.md](docs/07_report.md) | How the LaTeX report is organised and synced with Overleaf |
 
 More pages (MDP, simulator, algorithms, live benchmark, results) are added with each phase.

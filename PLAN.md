@@ -1,6 +1,6 @@
 # Plan — RL Adaptive Speculative Decoding
 
-Status: **APPROVED 9 Nov** (defaults D1–D15, Overleaf for LaTeX). Progress: P0 setup in progress; report skeleton done.
+Status: **APPROVED 9 Nov** (defaults D1–D15, Overleaf for LaTeX). Progress: P0 done · P1 code done, Qwen logging running · P2 code + tests done · P3 script ready.
 Sources: `RL_SpecDecoding_Project_Guide.pdf` + the team proposal doc
 (https://claude.ai/artifact/Ng8gGdLpuKhmK7CWns2pqK — Shikhar Saxena, Vaibhav Sundriyal, Angad Shukla, Thapar).
 Deadline: **17 Nov 2026**. Today: 9 Nov. Dates below follow the proposal's timeline (section 8).
