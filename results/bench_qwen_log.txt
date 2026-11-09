@@ -1,0 +1,127 @@
+W1110 02:46:25.781000 12168 .venv\Lib\site-packages\torch\distributed\elastic\multiprocessing\redirects.py:29] NOTE: Redirects are currently not supported in Windows or MacOs.
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights:  12%|#2        | 35/290 [00:00<00:00, 340.74it/s]Loading weights:  25%|##4       | 72/290 [00:00<00:00, 353.44it/s]Loading weights:  39%|###8      | 113/290 [00:00<00:00, 372.15it/s]Loading weights:  53%|#####3    | 154/290 [00:00<00:00, 381.16it/s]Loading weights:  67%|######6   | 193/290 [00:00<00:00, 363.41it/s]Loading weights:  80%|#######9  | 231/290 [00:00<00:00, 368.03it/s]Loading weights:  92%|#########2| 268/290 [00:00<00:00, 363.75it/s]Loading weights: 100%|##########| 290/290 [00:00<00:00, 377.12it/s]
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   4%|3         | 13/338 [00:00<00:02, 113.26it/s]Loading weights:   8%|8         | 28/338 [00:00<00:02, 130.59it/s]Loading weights:  14%|#3        | 47/338 [00:00<00:02, 130.25it/s]Loading weights:  18%|#8        | 61/338 [00:00<00:02, 124.91it/s]Loading weights:  22%|##2       | 76/338 [00:00<00:01, 131.71it/s]Loading weights:  28%|##7       | 93/338 [00:00<00:01, 125.37it/s]Loading weights:  32%|###1      | 107/338 [00:00<00:01, 123.34it/s]Loading weights:  36%|###5      | 121/338 [00:00<00:01, 127.87it/s]Loading weights:  40%|###9      | 135/338 [00:01<00:01, 126.30it/s]Loading weights:  46%|####5     | 155/338 [00:01<00:01, 131.55it/s]Loading weights:  50%|#####     | 169/338 [00:01<00:01, 126.05it/s]Loading weights:  54%|#####4    | 183/338 [00:01<00:01, 126.30it/s]Loading weights:  58%|#####7    | 196/338 [00:01<00:01, 125.89it/s]Loading weights:  64%|######3   | 215/338 [00:01<00:01, 119.39it/s]Loading weights:  69%|######8   | 232/338 [00:01<00:00, 129.08it/s]Loading weights:  73%|#######2  | 246/338 [00:01<00:00, 131.83it/s]Loading weights:  78%|#######7  | 263/338 [00:02<00:00, 127.19it/s]Loading weights:  82%|########1 | 277/338 [00:02<00:00, 123.65it/s]Loading weights:  86%|########5 | 290/338 [00:02<00:00, 124.82it/s]Loading weights:  90%|########9 | 304/338 [00:02<00:00, 125.23it/s]Loading weights:  95%|#########4| 321/338 [00:02<00:00, 121.93it/s]Loading weights: 100%|##########| 338/338 [00:02<00:00, 129.67it/s]
+run 1/3  prompt 1/30  19s
+run 1/3  prompt 2/30  23s
+run 1/3  prompt 3/30  37s
+run 1/3  prompt 4/30  40s
+run 1/3  prompt 5/30  61s
+run 1/3  prompt 6/30  83s
+run 1/3  prompt 7/30  104s
+run 1/3  prompt 8/30  123s
+run 1/3  prompt 9/30  142s
+run 1/3  prompt 10/30  165s
+run 1/3  prompt 11/30  182s
+run 1/3  prompt 12/30  200s
+run 1/3  prompt 13/30  218s
+run 1/3  prompt 14/30  236s
+run 1/3  prompt 15/30  255s
+run 1/3  prompt 16/30  273s
+run 1/3  prompt 17/30  291s
+run 1/3  prompt 18/30  309s
+run 1/3  prompt 19/30  329s
+run 1/3  prompt 20/30  347s
+run 1/3  prompt 21/30  364s
+run 1/3  prompt 22/30  382s
+run 1/3  prompt 23/30  400s
+run 1/3  prompt 24/30  419s
+run 1/3  prompt 25/30  436s
+run 1/3  prompt 26/30  457s
+run 1/3  prompt 27/30  475s
+run 1/3  prompt 28/30  492s
+run 1/3  prompt 29/30  509s
+run 1/3  prompt 30/30  531s
+run 2/3  prompt 1/30  549s
+run 2/3  prompt 2/30  554s
+run 2/3  prompt 3/30  567s
+run 2/3  prompt 4/30  571s
+run 2/3  prompt 5/30  592s
+run 2/3  prompt 6/30  613s
+run 2/3  prompt 7/30  634s
+run 2/3  prompt 8/30  654s
+run 2/3  prompt 9/30  672s
+run 2/3  prompt 10/30  695s
+run 2/3  prompt 11/30  712s
+run 2/3  prompt 12/30  730s
+run 2/3  prompt 13/30  748s
+run 2/3  prompt 14/30  766s
+run 2/3  prompt 15/30  784s
+run 2/3  prompt 16/30  802s
+run 2/3  prompt 17/30  819s
+run 2/3  prompt 18/30  836s
+run 2/3  prompt 19/30  857s
+run 2/3  prompt 20/30  874s
+run 2/3  prompt 21/30  891s
+run 2/3  prompt 22/30  909s
+run 2/3  prompt 23/30  927s
+run 2/3  prompt 24/30  945s
+run 2/3  prompt 25/30  962s
+run 2/3  prompt 26/30  982s
+run 2/3  prompt 27/30  1000s
+run 2/3  prompt 28/30  1017s
+run 2/3  prompt 29/30  1034s
+run 2/3  prompt 30/30  1056s
+run 3/3  prompt 1/30  1074s
+run 3/3  prompt 2/30  1078s
+run 3/3  prompt 3/30  1092s
+run 3/3  prompt 4/30  1095s
+run 3/3  prompt 5/30  1116s
+run 3/3  prompt 6/30  1137s
+run 3/3  prompt 7/30  1158s
+run 3/3  prompt 8/30  1177s
+run 3/3  prompt 9/30  1196s
+run 3/3  prompt 10/30  1219s
+run 3/3  prompt 11/30  1236s
+run 3/3  prompt 12/30  1254s
+run 3/3  prompt 13/30  1272s
+run 3/3  prompt 14/30  1290s
+run 3/3  prompt 15/30  1309s
+run 3/3  prompt 16/30  1326s
+run 3/3  prompt 17/30  1343s
+run 3/3  prompt 18/30  1360s
+run 3/3  prompt 19/30  1380s
+run 3/3  prompt 20/30  1397s
+run 3/3  prompt 21/30  1415s
+run 3/3  prompt 22/30  1432s
+run 3/3  prompt 23/30  1450s
+run 3/3  prompt 24/30  1469s
+run 3/3  prompt 25/30  1486s
+run 3/3  prompt 26/30  1506s
+run 3/3  prompt 27/30  1524s
+run 3/3  prompt 28/30  1540s
+run 3/3  prompt 29/30  1558s
+run 3/3  prompt 30/30  1579s
+       method  tokens_per_sec  mean_accepted_len  exact_match_pct    n  speedup
+           vi          59.267              3.939           90.000 90.0    1.509
+    reinforce          58.750              4.463           86.667 90.0    1.496
+          dqn          57.872              4.895           86.667 90.0    1.473
+       qlearn          57.732              4.888           83.333 90.0    1.470
+threshold_0.4          55.735              5.370           86.667 90.0    1.419
+    fixed_k=3          54.342              3.373           93.333 90.0    1.384
+    fixed_k=4          54.205              3.981           93.333 90.0    1.380
+ target_alone          39.275              1.000          100.000 90.0    1.000
+task        method  tokens_per_sec  mean_accepted_len  exact_match_pct    n  speedup
+chat     reinforce          52.088              3.000             60.0 30.0    1.328
+chat            vi          51.245              2.647             80.0 30.0    1.307
+chat           dqn          51.079              3.424             70.0 30.0    1.303
+chat        qlearn          50.041              3.401             60.0 30.0    1.276
+chat threshold_0.4          48.984              3.864             70.0 30.0    1.249
+chat     fixed_k=3          48.471              3.000             80.0 30.0    1.236
+chat     fixed_k=4          47.029              3.417             80.0 30.0    1.199
+chat  target_alone          39.209              1.000            100.0 30.0    1.000
+code            vi          63.296              4.885             90.0 30.0    1.613
+code     reinforce          63.021              5.664            100.0 30.0    1.606
+code        qlearn          62.564              6.038             90.0 30.0    1.595
+code           dqn          62.249              6.009             90.0 30.0    1.587
+code threshold_0.4          60.976              6.598             90.0 30.0    1.554
+code     fixed_k=4          57.972              4.310            100.0 30.0    1.478
+code     fixed_k=3          57.025              3.565            100.0 30.0    1.454
+code  target_alone          39.231              1.000            100.0 30.0    1.000
+math            vi          62.837              4.814            100.0 30.0    1.596
+math     reinforce          60.673              5.363            100.0 30.0    1.541
+math        qlearn          60.282              5.751            100.0 30.0    1.531
+math           dqn          59.851              5.751            100.0 30.0    1.520
+math     fixed_k=4          57.220              4.195            100.0 30.0    1.453
+math     fixed_k=3          56.988              3.521            100.0 30.0    1.447
+math threshold_0.4          56.937              6.081            100.0 30.0    1.446
+math  target_alone          39.371              1.000            100.0 30.0    1.000

@@ -20,7 +20,7 @@ Discount & $\gamma = 1$ (episodic and bounded), or $0.99$ for stability with DQN
 \end{tabularx}
 \end{table}
 
-Here $c = t_\text{draft} / t_\text{target}$ is the measured cost of one draft step relative to one target call, and $\lambda$ is the price of one target call in tokens. \todo{measured values of $c$ for each model pair.}
+Here $c = t_\text{draft} / t_\text{target}$ is the measured cost of one draft step relative to one target call, and $\lambda$ is the price of one target call in tokens. Measured on our GPU: $c=\numCqwen$ for the Qwen pair and $c=\numCsmol$ for SmolLM2 (Section~\ref{sec:results}).
 
 \paragraph{Choosing $\lambda$.} Maximising throughput (tokens per unit time) is a ratio objective. By Dinkelbach's method~\citep{dinkelbach1967} it equals maximising $\text{tokens} - \lambda\cdot\text{time}$, where $\lambda$ is the best achievable throughput. In practice we set $\lambda$ to the throughput of the best fixed-$k$ baseline, train, measure the new throughput, update $\lambda$ and retrain once. We also report a small sweep over $\lambda$.
 

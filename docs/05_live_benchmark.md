@@ -1,7 +1,27 @@
 # Live speculative decoding and the benchmark
 
 The simulator trains the agents; this part proves the speedup is real on the GPU and that the output is
-unchanged. Code: `src/specrl/specdec.py`, `src/specrl/bench.py`, test `tests/test_specdec.py`.
+unchanged. Code: `src/specrl/specdec.py`, `src/specrl/fastmodel.py`, `src/specrl/bench.py`, test
+`tests/test_specdec.py`.
+
+## Why CUDA graphs (read this first)
+
+On this laptop a one-token forward pass is limited by how fast the CPU can launch GPU kernels (Windows
+driver), not by model size. Measured without graphs: Qwen 0.5B draft step 48.8 ms vs 1.5B verify 60.2 ms
+(c = 0.81); SmolLM2 135M draft 47.3 ms vs 1.7B verify 32.8 ms (c = 1.44 — the small model is *slower*, it has
+more layers). Speculation cannot win like that.
+
+`fastmodel.GraphRunner` fixes it: each model gets a fixed-size KV cache (`StaticCache`, 1024 tokens) and one
+recorded CUDA graph per input length 1–10. A step is then one graph replay instead of hundreds of kernel
+launches: Qwen draft 10.7 ms, verify 26.5 ms (c = 0.40); SmolLM2 draft 6.6 ms, verify 26.7 ms (c = 0.25).
+Inputs longer than 10 tokens (the prompt) run normally into the same cache. Every method in the benchmark,
+including the target-alone baseline, uses the same runners.
+
+transformers 5 detail: `StaticCache` layers write at their own internal counter, not at the position passed
+in, so `GraphRunner` sets every layer's counter to the start position at the beginning of each forward
+(inside the graph). Without that, writes landed in the wrong slots and outputs were wrong.
+
+`load_fast_pair(pair)` returns the tokenizer and both runners (~15 s, includes capturing the graphs).
 
 ## How one round works (`spec_generate`)
 
@@ -12,8 +32,9 @@ unchanged. Code: `src/specrl/specdec.py`, `src/specrl/bench.py`, test `tests/tes
    not seen yet). It returns the target's greedy choice at every draft position plus one more.
 3. **Accept.** Drafts are accepted left to right while they equal the target's choice (`n` of them); then
    the target's own token at position `n+1` is added. So a round always gains `n + 1` tokens.
-4. **Roll back the caches.** Both KV caches are cropped (`DynamicCache.crop`) to the accepted length, so
-   rejected drafts are forgotten.
+4. **Roll back the caches.** Both caches are cut back to the accepted length, so rejected drafts are
+   forgotten. With `GraphRunner` that just moves the write position back (stale entries are masked out
+   and overwritten); with a plain model it calls `crop_to` on the `DynamicCache`.
 
 Cache invariant: at the start of a round each cache holds a prefix of the text that excludes at least the
 last token, so the next forward always has an input whose output predicts the next token. When all drafts
@@ -33,14 +54,16 @@ implementation differences. A test checks it gives exactly `model.generate`'s ou
 uv run pytest tests/test_specdec.py -s
 ```
 
-- `target_generate` == `model.generate(do_sample=False)` on 5 prompts.
-- cache and no-cache speculative decoding agree.
-- For fixed k = 1, 4, 8 and threshold 0.4 on 20 test prompts, speculative output == target output.
-  Allowed: up to 2 prompts that diverge late, ≥ 95% of tokens equal before the first divergence.
+- `target_generate` == `model.generate(do_sample=False, repetition_penalty=1.0)` on 5 prompts.
+- CUDA-graph target decoding == plain decoding, token for token.
+- Cache and no-cache speculative decoding agree.
+- For fixed k = 1, 4, 8 and threshold 0.4 on 20 test prompts (graph and plain paths): wherever the
+  speculative output differs from the target's own output, the target's top-2 logit gap at that point must
+  be < 0.1 (a near-tie). Result: 16–18 of 20 identical; every difference at a gap of 0.000–0.016.
 
-Why not 100%: the target verifies 5 tokens in one fp16 pass but generates one at a time alone; the two
-paths round differently, and when the top two tokens are almost tied the argmax can flip. The guide treats
-more than 1% bad tokens as a bug.
+Why not 100%: the target verifies several tokens in one fp16 pass but generates one at a time alone; the
+two paths round differently, and when the top two tokens are almost tied the argmax can flip. A real bug
+(wrong acceptance or cache indexing) would diverge where the target has a clear preference — none did.
 
 ## Benchmark (`bench.py`)
 

@@ -1,0 +1,11 @@
+{
+  "pair": "smol",
+  "t_draft_ms": 6.625499998335727,
+  "t_target_ms": 26.744650000182446,
+  "t_target_1tok_ms": 25.01510000001872,
+  "c": 0.24773178928460565,
+  "eager_t_draft_ms": 47.33520000081626,
+  "eager_t_target_ms": 32.772800001112046,
+  "eager_c": 1.4443440901970561,
+  "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU"
+}

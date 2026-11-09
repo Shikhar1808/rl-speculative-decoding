@@ -28,4 +28,4 @@ Simulation-vs-live gap & Whether the simulator ranks methods in the same order a
   \item Speedups will be larger on the SmolLM2 pair (12$\times$ size gap) than on the Qwen pair (3$\times$ gap).
 \end{enumerate}
 
-\todo{hardware details of the benchmark PC, software versions (PyTorch, transformers, CUDA), training hyperparameters.}
+\paragraph{Setup.} One laptop: NVIDIA RTX 3050 6\,GB (laptop GPU), 32\,GB RAM, Windows 11; Python 3.12, PyTorch 2.11 (CUDA 12.8), transformers 5.22, fp16 weights. All RL training runs on the laptop CPU. The live benchmark uses 30 test prompts (10 per task), 3 warm-up generations, 3 timed runs, CUDA synchronisation around every generation, and rotates the order of methods for each prompt. Hyperparameters are listed in Table~\ref{tab:algos}.

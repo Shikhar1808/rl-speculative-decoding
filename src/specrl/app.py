@@ -111,7 +111,13 @@ def build(pair):
             if el >= end:
                 tps_t, tps_r = len(t_toks) / t_times[-1], n_spec / r_times[-1]
                 acc = n_spec / len(rounds)
-                same = "identical" if sum((r["new"] for r in rounds), []) == t_toks else "DIFFERENT (fp16 near-tie)"
+                spec_toks = sum((r["new"] for r in rounds), [])
+                if spec_toks == t_toks:
+                    same = "identical to the target alone"
+                else:  # only happens from an fp16 near-tie onward (tests/test_specdec.py checks this)
+                    k = next((i for i, (x, y) in enumerate(zip(spec_toks, t_toks)) if x != y),
+                             min(len(spec_toks), len(t_toks)))
+                    same = f"same as the target alone for the first {k} of {len(t_toks)} tokens"
                 summary += (f"  \n\n**Speedup {tps_r / tps_t:.2f}×** · {len(rounds)} target calls instead of "
                             f"{len(t_toks)} · {acc:.2f} tokens per call · output {same}")
             yield render_target(t_toks[:nt]), render_spec(shown_r), meter(shown_r), summary

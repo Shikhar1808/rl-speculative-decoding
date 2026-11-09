@@ -69,16 +69,26 @@ def main_table():
         r"Method & Live speedup & Sim speedup & Tokens/call & Live speedup & Sim speedup & Tokens/call \\",
         r"\midrule",
     ]
+    best = {k: max(v.get(k, 0) for mm, v in rows.items() if mm in keep and mm != "target_alone")
+            for k in ("qwen_live", "qwen_sim", "smol_live", "smol_sim")}
+
+    def sp(r, key):  # speedup cell, bold if it is the best in its column
+        v = r.get(key)
+        if v is None or pd.isna(v):
+            return "--"
+        cell = f"{v:.2f}$\\times$"
+        return rf"\textbf{{{cell}}}" if abs(v - best[key]) < 1e-12 else cell
+
     for m in keep:
         if m not in rows:
             continue
         r = rows[m]
         cells = []
         for pair in ("qwen", "smol"):
-            live = r.get(f"{pair}_live")
-            cells += [f(live, "{:.2f}$\\times$") if live is not None else "--",
-                      f(r.get(f"{pair}_sim"), "{:.2f}$\\times$") if m != "target_alone" else "1.00$\\times$",
-                      f(r.get(f"{pair}_acc")) if m != "target_alone" else "1.00"]
+            if m == "target_alone":
+                cells += ["1.00$\\times$", "1.00$\\times$", "1.00"]
+            else:
+                cells += [sp(r, f"{pair}_live"), sp(r, f"{pair}_sim"), f(r.get(f"{pair}_acc"))]
         if m == "threshold_0.4":
             lines.append(r"\midrule")
         lines.append(f"{name(m)} & " + " & ".join(cells) + r" \\")

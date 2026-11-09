@@ -24,7 +24,7 @@ The GPU is used only twice: once to log model outputs and once for the final liv
 
 \paragraph{Smart logging.} With greedy decoding the final text is the same for every policy, since it is always the target's greedy output. So for each prompt we:
 \begin{enumerate}
-  \item Generate the target's greedy answer once.
+  \item Generate the target's greedy answer once (8 prompts per batch; repetition penalty off, so the text is pure greedy).
   \item Run one forward pass of the draft model over the full text.
   \item Store, at every position $t$, the draft's top probability $p_t$, its entropy $H_t$, and $\text{match}_t$ = whether the draft's top token equals the true next token.
 \end{enumerate}
@@ -32,7 +32,7 @@ In the simulator, a round that starts at position $t$ with $s$ drafts accepts $n
 
 One approximation remains: after the first wrong draft token, a real draft model would continue from its own mistake, while the log continues from the true text. Those tokens are rejected anyway, and the live benchmark checks that the gap is small.
 
-\paragraph{Live benchmark.} A real draft$\to$verify loop with a key-value cache (transformers' \texttt{DynamicCache}, cropped back to the accepted length after each round). Correctness test: the output must equal \texttt{target.generate(do\_sample=False)} on 20 prompts. Timing uses 3 warm-up runs, CUDA synchronisation, and an average over at least 3 runs.
+\paragraph{Live benchmark.} A real draft$\to$verify loop with a key-value cache. Each model keeps a fixed-size cache and one recorded CUDA graph per input length (1--10 tokens), which removes the per-step kernel-launch overhead; after each verify the cache position is moved back to the accepted length, so rejected drafts are forgotten. The target-alone baseline uses the same machinery. Correctness test: the output must equal the target's own greedy output on 20 test prompts. Timing uses 3 warm-up runs, CUDA synchronisation, and 3 timed runs.
 
 \begin{table}[h]
 \centering
@@ -51,4 +51,4 @@ Laptop (RTX 3050, 6\,GB) & SmolLM2-135M-Instruct $\to$ SmolLM2-1.7B-Instruct & $
 
 Draft and target in each pair share a tokenizer, which speculative decoding requires.
 
-\paragraph{Data.} About 400 training and 100 test prompts, mixed from Alpaca (chat), HumanEval (code) and GSM8K (maths), so results can be compared per task type. \todo{exact counts per task after logging.}
+\paragraph{Data.} 498 prompts mixed from Alpaca (167 chat instructions), HumanEval (all 164 code problems) and GSM8K (167 maths questions), so results can be compared per task type. 20\% of each task (99 prompts) is held out as the test set; agents train on the other 399.

@@ -206,18 +206,23 @@ def lambda_sweep(pair, train_eps, test_eps, c):
 
 
 def sim_vs_live(pair, sim, live):
-    m = sim.merge(live, on="method")
-    fig, ax = plt.subplots(figsize=(4.8, 4.2))
-    ax.scatter(m.sim_speedup, m.speedup, s=60, c=[color(x) for x in m.method], edgecolors="white", linewidths=2,
-               zorder=3)
-    for _, r in m.iterrows():
-        ax.annotate(label(r.method), (r.sim_speedup, r.speedup), xytext=(5, 3), textcoords="offset points",
-                    fontsize=8, color=INK2)
-    lo, hi = min(m.sim_speedup.min(), m.speedup.min()) * 0.95, max(m.sim_speedup.max(), m.speedup.max()) * 1.05
-    ax.plot([lo, hi], [lo, hi], color=GREY, lw=1, ls=":")
-    ax.set_xlabel("simulator speedup")
-    ax.set_ylabel("live speedup (wall clock)")
-    ax.set_title(f"Simulator vs live ({pair})", loc="left", color=INK, fontsize=11)
+    """Dumbbell: one row per method, open dot = simulator, filled dot = live wall clock."""
+    m = sim.merge(live, on="method").sort_values("speedup")
+    fig, ax = plt.subplots(figsize=(6.4, 0.42 * len(m) + 1.2))
+    for i, r in enumerate(m.itertuples()):
+        ax.plot([r.speedup, r.sim_speedup], [i, i], color=GREY, lw=2, zorder=1)
+        ax.scatter(r.sim_speedup, i, s=60, facecolors="white", edgecolors=color(r.method), linewidths=2, zorder=3)
+        ax.scatter(r.speedup, i, s=60, color=color(r.method), edgecolors="white", linewidths=1.5, zorder=3)
+    ax.set_yticks(range(len(m)), [label(x) for x in m.method])
+    ax.grid(axis="y", visible=False)
+    ax.set_xlabel("speedup vs target alone")
+    ax.scatter([], [], s=60, facecolors="white", edgecolors=INK2, linewidths=2, label="simulator")
+    ax.scatter([], [], s=60, color=INK2, label="live (wall clock)")
+    ax.legend(loc="lower right", fontsize=8)
+    gap = float((1 - m.speedup / m.sim_speedup).mean())
+    rho = m.speedup.rank().corr(m.sim_speedup.rank())  # Spearman rank correlation
+    ax.set_title(f"Simulator vs live ({pair}): live {gap:.0%} lower on average, rank corr. {rho:.2f}", loc="left",
+                 color=INK, fontsize=11)
     save(fig, "sim_vs_live", pair)
 
 

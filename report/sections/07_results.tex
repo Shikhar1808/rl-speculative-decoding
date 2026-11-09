@@ -1,37 +1,115 @@
 \section{Results}
-% Filled after phases P6-P7. Numbers come from results/*.csv; figures from figures/.
+\label{sec:results}
+% Tables in generated/ are written by `uv run python -m specrl.report_tables` from results/*.csv.
+
+\subsection{Measured costs}
+On our RTX~3050 laptop a draft step costs $c=\numCqwen$ of a 5-token target verify for the Qwen pair
+(\tDraftQwen{}\,ms vs \tTargetQwen{}\,ms) and $c=\numCsmol$ for SmolLM2 (\tDraftSmol{}\,ms vs \tTargetSmol{}\,ms).
+Without CUDA graphs these were 0.81 and 1.44: a one-token step was limited by kernel-launch overhead on
+Windows rather than by model size, so the small models were nearly as slow as (SmolLM2: slower than) the large
+ones and speculation could not pay off. Recording each forward pass as a CUDA graph removed that overhead for
+every method, including the target-alone baseline.
+
+\subsection{Main results}
 
 \begin{table}[h]
 \centering
-\caption{Main results. \todo{fill from \texttt{results/*.csv}.}}
+\caption{Speedup over the target model alone on the 99 test prompts. Live = wall-clock on the RTX 3050
+(30 test prompts, 3 runs); Sim = simulator estimate; Tokens/call = mean tokens gained per target call.}
 \label{tab:main-results}
 \small
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-Method & Speedup (Qwen) & Speedup (SmolLM2) & Mean accepted length & Sim reward \\
-\midrule
-Target alone        & 1.00$\times$ & 1.00$\times$ & 1.00 & -- \\
-Fixed $k=4$         & & & & \\
-Best fixed $k$      & & & & \\
-Threshold 0.4       & & & & \\
-Value Iteration     & & & & \\
-Q-learning          & & & & \\
-DQN                 & & & & \\
-REINFORCE           & & & & \\
-\bottomrule
-\end{tabular}
+\input{generated/main_results}
 \end{table}
 
-\paragraph{Training curves.} \todo{Figure: reward vs episodes, all four algorithms.}
+\resultsParagraph
 
-\paragraph{What the agent learned.} \todo{Figure: policy heatmap over $(s, q)$. Does it form a threshold, as SpecDec++ predicts?}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.49\linewidth]{speedup_live_qwen}\hfill
+\includegraphics[width=0.49\linewidth]{speedup_live_smol}
+\caption{Live speedup per method (grey: baselines; colour: RL agents).}
+\label{fig:speedup}
+\end{figure}
 
-\paragraph{Per-task behaviour.} \todo{Does the agent draft longer on code than on chat? Per-task table.}
+\subsection{Comparing the four algorithms}
 
-\paragraph{Effect of $\lambda$.} \todo{$\lambda$ sweep figure.}
+\begin{itemize}
+  \item \textbf{Model-based vs model-free.} Value Iteration beats Q-learning on the same 80 states and trains
+  in about a second. It plans with an exact count-based model of the logs, while Q-learning estimates the
+  same values from noisy sampled rounds and needed 10\,000 episodes to come close
+  (Figure~\ref{fig:heatmap}).
+  \item \textbf{Tabular vs function approximation.} DQN beats Q-learning: it sees five continuous features,
+  including the latest token's confidence $p$ and the entropy $H$, and generalises across similar states, at
+  about 20 times the training cost (Table~\ref{tab:training}).
+  \item \textbf{Value-based vs policy-based.} DQN and REINFORCE are within 1\% of each other. Per-round
+  episodes keep REINFORCE's variance low, and its training curve rises fastest (Figure~\ref{fig:curves}).
+\end{itemize}
 
-\paragraph{Transfer.} \todo{Does a policy trained on the Qwen pair work on the SmolLM2 pair?}
+\begin{table}[h]
+\centering
+\caption{Tuned $\lambda$ (after the Dinkelbach update) and CPU training time per algorithm.}
+\label{tab:training}
+\small
+\input{generated/training}
+\end{table}
 
-\paragraph{Simulator vs live.} \todo{Do both rank the methods the same way?}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\linewidth]{training_curves_qwen}
+\caption{Training curves (Qwen): mean reward per round. Value Iteration needs no episodes; its value is shown
+as a line.}
+\label{fig:curves}
+\end{figure}
 
-\paragraph{Hypotheses revisited.} \todo{Which of the five hypotheses held.}
+\paragraph{A bug the comparison exposed.} Q-learning first scored 1.28$\times$, below fixed $k=1$. Comparing
+its table with Value Iteration's showed why: \CONT{} at $s=8$ is impossible, so its table entry was never
+updated, and its initial value of 0 won the $\max$ in the bootstrap target, teaching the agent to always
+continue. DQN had the same flaw. Excluding that action from the target fixed both.
+
+\subsection{What the agents learned}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{policy_heatmap_qwen}
+\caption{Share of \STOP{} decisions in each $(s,q)$ cell on the test prompts (Qwen). Grey cells are rarely
+visited.}
+\label{fig:heatmap}
+\end{figure}
+
+\heatmapSentence
+
+\subsection{Per-task behaviour}
+
+\begin{table}[h]
+\centering
+\caption{Qwen: mean tokens drafted per round (simulator) / live speedup, by task.}
+\label{tab:per-task}
+\small
+\input{generated/per_task_qwen}
+\end{table}
+
+\taskSentence
+
+\subsection{Effect of $\lambda$}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\linewidth]{lambda_sweep_qwen}
+\caption{Value Iteration trained with $\lambda$ from 0.5 to 1.5 times the tuned value (Qwen).}
+\label{fig:lambda}
+\end{figure}
+
+\lambdaSentence
+
+\subsection{Simulator vs live}
+
+\simLiveSentence
+
+\subsection{Correctness}
+On 20 test prompts and four policies, 16--18 of 20 speculative outputs were identical to the target's own
+greedy output. Every difference started at an exact near-tie of the target's top two tokens (logit gap
+0.000--0.016), where fp16 rounding of a multi-token verify pass differs from one-token steps; none occurred
+at a clear gap, so the acceptance and cache logic are correct.
+
+\subsection{Hypotheses revisited}
+\hypothesesParagraph

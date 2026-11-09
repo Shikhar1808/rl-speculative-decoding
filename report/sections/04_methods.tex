@@ -4,20 +4,32 @@ We solve the same MDP with four algorithms, chosen so that each pair of them con
 
 \begin{table}[h]
 \centering
-\caption{The four algorithms. \todo{update hyperparameters to the final values used.}}
+\caption{The four algorithms and their final settings.}
 \label{tab:algos}
 \small
-\begin{tabularx}{\linewidth}{@{}l>{\raggedright}p{2.6cm}>{\raggedright}p{3cm}X@{}}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright}p{2.4cm}>{\raggedright}p{2.8cm}X@{}}
 \toprule
 Algorithm & Course topic & State & Key details \\
 \midrule
-Value Iteration & Dynamic programming, Bellman equations & Tabular: $s$ (1--8) $\times$ 10 bins of $q$ = 80 states & Transition probabilities and expected rewards estimated by counting in the logs, then repeated Bellman optimality updates. A model-based, near-optimal reference \\
-Q-learning & Temporal-difference learning & Same 80 tabular states & $Q(s,a) \leftarrow Q(s,a) + \alpha[r + \gamma \max Q(s',\cdot) - Q(s,a)]$, $\varepsilon$-greedy exploration with decaying $\varepsilon$ \\
-DQN~\citep{mnih2015} & Function approximation, deep RL & Continuous features $[s/8, p, H, q, a]$ & MLP 5$\to$64$\to$64$\to$2, experience replay, target network, Huber loss, Adam \\
-REINFORCE~\citep{williams1992} & Policy gradient & Same continuous features & Softmax policy MLP 5$\to$64$\to$2, Monte Carlo returns with a mean-return baseline to reduce variance \\
+Value Iteration & Dynamic programming, Bellman equations & Tabular: $s$ (1--8) $\times$ 10 bins of $q$ = 80 states & Transition probabilities and expected rewards counted from the logs (every logged position as a round start), then Bellman optimality updates until the residual is below $10^{-9}$ (about 8 sweeps) \\
+Q-learning & Temporal-difference learning & Same 80 tabular states & $Q(s,a) \leftarrow Q(s,a) + \alpha[r + \max_{a'} Q(s',a') - Q(s,a)]$, $\alpha=0.05$, $\varepsilon$-greedy ($1\to0.05$ over 80\% of training), 10\,000 episodes \\
+DQN~\citep{mnih2015} & Function approximation, deep RL & Continuous features $[s/8, p, H/5, q, a]$ & MLP 5$\to$64$\to$64$\to$2, replay buffer of 50k steps, batch 128, update every 4 steps, target network synced every 500 steps, Huber loss, Adam ($10^{-3}$), 3000 episodes \\
+REINFORCE~\citep{williams1992} & Policy gradient & Same continuous features & Softmax policy MLP 5$\to$64$\to$2, Monte Carlo returns, mean-return baseline, advantages divided by their standard deviation, Adam ($10^{-3}$), 3000 episodes \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\paragraph{Episodes.} All four algorithms treat each draft$\to$verify round as one short episode of at most
+8 decisions with $\gamma=1$: \CONT{} bootstraps from the next state of the same round, and \STOP{} ends it.
+An answer has a fixed number of tokens whatever the policy, so a whole-answer return would only measure
+time and $\lambda$ would have no effect. Per round, maximising
+$\mathbb{E}[\text{gained}-\lambda\,\text{cost}]$ is exactly Dinkelbach's form of maximising throughput.
+Steps where \STOP{} is forced ($s=8$, end of the answer) are stored as \STOP{} and get no policy gradient,
+and \CONT{} at $s=8$ is excluded from bootstrap targets.
+
+\paragraph{Choosing $\lambda$.} Each algorithm is trained twice: first with $\lambda$ equal to the best
+fixed-$k$ throughput on the training prompts, then with $\lambda$ equal to the throughput its own first policy
+reached (one Dinkelbach update).
 
 \paragraph{Comparison axes.}
 \begin{itemize}

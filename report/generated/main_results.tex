@@ -1,0 +1,18 @@
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+ & \multicolumn{3}{c}{Qwen2.5 0.5B$\to$1.5B} & \multicolumn{3}{c}{SmolLM2 135M$\to$1.7B} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Method & Live speedup & Sim speedup & Tokens/call & Live speedup & Sim speedup & Tokens/call \\
+\midrule
+Target alone & 1.00$\times$ & 1.00$\times$ & 1.00 & 1.00$\times$ & 1.00$\times$ & 1.00 \\
+Fixed $k=3$ & 1.38$\times$ & 1.50$\times$ & 3.31 & -- & 1.79$\times$ & 3.10 \\
+Fixed $k=4$ & 1.38$\times$ & 1.50$\times$ & 3.89 & 1.57$\times$ & 1.81$\times$ & 3.58 \\
+\midrule
+Threshold 0.4 & 1.42$\times$ & 1.53$\times$ & 5.17 & 1.65$\times$ & 1.91$\times$ & 4.43 \\
+\midrule
+Value Iteration & \textbf{1.51$\times$} & \textbf{1.66$\times$} & 3.88 & \textbf{1.75$\times$} & \textbf{2.02$\times$} & 3.84 \\
+Q-learning & 1.47$\times$ & 1.59$\times$ & 4.77 & 1.67$\times$ & 1.94$\times$ & 4.42 \\
+DQN & 1.47$\times$ & 1.63$\times$ & 4.78 & 1.70$\times$ & 2.01$\times$ & 4.10 \\
+REINFORCE & 1.50$\times$ & 1.64$\times$ & 4.36 & 1.70$\times$ & 2.01$\times$ & 3.95 \\
+\bottomrule
+\end{tabular}

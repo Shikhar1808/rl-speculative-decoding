@@ -13,6 +13,8 @@
 \newcommand{\STOP}{\textsc{stop}}
 \newcommand{\CONT}{\textsc{continue}}
 
+\providecommand{\citep}[1]{}  % findings.tex cites; slides don't
+\providecommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
 \input{generated/numbers}  % measured values, written by `uv run python -m specrl.report_tables`
 \input{findings}           % one-sentence findings shared by report and slides (written by hand)
 
@@ -108,14 +110,14 @@
 \begin{frame}{7. What the agent learned}
   \centering
   \includegraphics[width=\textwidth]{policy_heatmap_qwen}\\
-  \small \heatmapSentence
+  \small \heatmapShort
 \end{frame}
 
 \begin{frame}{7b. Training and per-task behaviour}
   \centering
   \includegraphics[height=0.45\textheight]{training_curves_qwen}\hfill
   \includegraphics[height=0.45\textheight]{per_task_draft_len_qwen}\\
-  \small \taskSentence
+  \small \taskShort
 \end{frame}
 
 \begin{frame}{8. Your turn}

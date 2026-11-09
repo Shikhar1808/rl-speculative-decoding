@@ -72,6 +72,7 @@ def main():
         spec_generate(enc[i % len(enc)], draft, target, fixed_k(4), max_new=32)
 
     ref, rows = {}, []
+    t_start = time.time()
     for run in range(a.runs):
         for j, (r, ids) in enumerate(zip(rows_p, enc)):
             order = names[j % len(names) :] + names[: j % len(names)]
@@ -97,7 +98,7 @@ def main():
                         "out": out,
                     }
                 )
-            print(f"run {run + 1}/{a.runs}  prompt {j + 1}/{len(rows_p)}", flush=True)
+            print(f"run {run + 1}/{a.runs}  prompt {j + 1}/{len(rows_p)}  {time.time() - t_start:.0f}s", flush=True)
 
     df = pd.DataFrame(rows)
     df["exact"] = [o == ref[i] for o, i in zip(df.out, df.id)]

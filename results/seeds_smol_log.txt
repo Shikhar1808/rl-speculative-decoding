@@ -1,0 +1,4 @@
+  vi seed 0: test sim speedup 2.019
+  qlearn seed 0: test sim speedup 1.939
+  qlearn seed 1: test sim speedup 1.903
+  qlearn seed 2: test sim speedup 1.942

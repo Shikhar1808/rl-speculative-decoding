@@ -1,7 +1,28 @@
 \section{Conclusion}
 
-This project applies the full course syllabus (MDPs, Bellman equations, dynamic programming, temporal-difference learning, function approximation, deep Q-learning and policy gradients) to a live problem in LLM inference. The task has a measurable payoff: faster text generation with identical output.
+This project applied the course syllabus (MDPs, Bellman equations, dynamic programming, temporal-difference
+learning, function approximation, deep Q-learning and policy gradients) to a live problem in LLM inference:
+deciding, token by token, when a small draft model should stop guessing and let a large model check its work.
+The payoff is measurable, faster text generation with the same output.
 
-The smart-logging simulator keeps the GPU cost low and lets all four algorithms train in minutes on a laptop CPU. The live benchmark and race demo then show the result on real hardware. \todo{rewrite with the actual findings: which algorithm won, by how much, and whether the threshold policy emerged.}
+\conclusionParagraph
 
-\paragraph{Limitations.} \todo{e.g.\ greedy decoding only, small models, simulator approximation after the first rejected draft.}
+Two engineering findings mattered as much as the algorithms. First, on a Windows laptop GPU a one-token
+forward pass is limited by kernel-launch overhead rather than model size, so the small draft models were
+nearly as slow as the large targets and speculation could not pay off; recording each forward pass as a CUDA
+graph cut the cost ratio $c$ from 0.81 to 0.40 (Qwen) and from 1.44 to 0.25 (SmolLM2). Second, the
+smart-logging simulator let all four algorithms train in seconds to minutes on a laptop CPU, and it ranked the
+methods in the same order as the live benchmark.
+
+\paragraph{Limitations.}
+\begin{itemize}
+  \item Greedy decoding only; speculative \emph{sampling} is not covered.
+  \item Small models on a 6\,GB laptop GPU. Absolute speedups depend on the hardware's $c$, and the
+  simulator's estimates were about 10\% higher than the live speedups, mostly because it does not count the
+  per-step cost of computing features and querying the policy.
+  \item The simulator approximation: drafts after the first rejected token see the true text rather than the
+  draft's own mistake. The number of accepted tokens is exact; only the features seen after a rejection can
+  differ.
+  \item In fp16, the speculative output equals the target's except at exact near-ties of its top two tokens
+  (16--18 of 20 test prompts fully identical).
+\end{itemize}
