@@ -11,7 +11,7 @@ uv run python -m specrl.train --pair qwen --algo dqn --lam 2.5 --rounds 1   # on
 | Algorithm | Course topic | State | Key settings |
 |---|---|---|---|
 | Value Iteration (`vi.py`) | DP, Bellman equations | (s, q-bin): 8 × 10 = 80 states | Model counted from logs; iterate until Bellman residual < 1e-9 |
-| Q-learning (`qlearn.py`) | Temporal difference | same 80 states | α = 0.05, ε 1.0 → 0.05 linear over 80% of episodes, 3000 episodes |
+| Q-learning (`qlearn.py`) | Temporal difference | same 80 states | α = 0.05, ε 1.0 → 0.05 linear over 80% of episodes, 10 000 episodes |
 | DQN (`dqn.py`) | Function approx, deep RL | `[s/K, p, H/5, q, a]` | MLP 5→64→64→2, replay 50k, batch 128, update every 4 steps, target sync 500 steps, Huber, Adam 1e-3, 1000 warm-up steps |
 | REINFORCE (`reinforce.py`) | Policy gradient | same 5 features | softmax MLP 5→64→2, Adam 1e-3, baseline = mean return per prompt, advantages ÷ std |
 
@@ -38,6 +38,10 @@ The acceptance-rate feature `a` still carries over between rounds, so DQN and RE
 
 At `s = K` and at the end of the answer the environment stops whatever the agent picks
 (`common.forced(env)`). Those steps are stored as STOP for Q-learning/DQN, and get no gradient in REINFORCE.
+
+CONTINUE at `s = K` is never trained, so it must not appear in a bootstrap target: Q-learning keeps it at −∞,
+DQN masks it when `s' = K`. Without this, its untouched value leaked into `max_a' Q(s',a')` and Q-learning
+learned "always continue" (DECISIONS.md #35).
 
 ## Lambda (Dinkelbach), automatic in `train.py`
 

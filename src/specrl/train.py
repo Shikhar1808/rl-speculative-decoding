@@ -59,7 +59,8 @@ def best_fixed_k(episodes, c):
 def train_one(pair, algo, train_eps, test_eps, c, lam, rounds, n_episodes, seed):
     for rd in range(rounds):
         t0 = time.time()
-        saved = ALGOS[algo].train(train_eps, lam=lam, c=c, K=K, n_episodes=n_episodes, seed=seed)
+        kw = {} if n_episodes is None else {"n_episodes": n_episodes}  # None: each algorithm's own default
+        saved = ALGOS[algo].train(train_eps, lam=lam, c=c, K=K, seed=seed, **kw)
         secs = time.time() - t0
         pol = to_policy(saved)
         tr = evaluate(pol, train_eps, c)
@@ -81,7 +82,8 @@ def main():
     ap.add_argument("--c", type=float, default=None)
     ap.add_argument("--lam", type=float, default=None, help="default: best fixed-k throughput (train split)")
     ap.add_argument("--rounds", type=int, default=2, help="Dinkelbach rounds")
-    ap.add_argument("--episodes", type=int, default=3000, help="training episodes (QL/DQN/REINFORCE)")
+    ap.add_argument("--episodes", type=int, default=None,
+                    help="training episodes (default per algorithm: QL 10000, DQN/REINFORCE 3000)")
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
 

@@ -1,0 +1,15 @@
+qwen: 399 train / 99 test episodes, c=0.405, best fixed: fixed_k=3 (1.476)
+  [vi] round 1: lambda=1.476  train throughput 1.621  (1.5s)
+  [vi] round 2: lambda=1.621  train throughput 1.625  (1.5s)
+  [qlearn] round 1: lambda=1.476  train throughput 1.538  (8.4s)
+  [qlearn] round 2: lambda=1.538  train throughput 1.558  (8.0s)
+  [dqn] round 1: lambda=1.476  train throughput 1.568  (185.6s)
+  [dqn] round 2: lambda=1.568  train throughput 1.579  (181.9s)
+  [reinforce] round 1: lambda=1.476  train throughput 1.612  (156.9s)
+  [reinforce] round 2: lambda=1.612  train throughput 1.612  (148.8s)
+
+test split, sim speedup vs target alone (best baseline: threshold_0.4 1.527):
+  vi         1.657   (+8.5% vs best baseline)  mean accepted len 3.88
+  qlearn     1.594   (+4.4% vs best baseline)  mean accepted len 4.77
+  dqn        1.626   (+6.5% vs best baseline)  mean accepted len 4.78
+  reinforce  1.643   (+7.6% vs best baseline)  mean accepted len 4.36

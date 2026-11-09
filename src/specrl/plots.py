@@ -86,8 +86,6 @@ def training_curves(pair, train_eps, c):
         d = pd.read_csv(f)
         y = d.mean_round_reward.rolling(5, min_periods=1).mean()
         ax.plot(d.episode, y, color=COL[algo], lw=2, label=NAMES[algo])
-        ax.annotate(NAMES[algo], (d.episode.iloc[-1], y.iloc[-1]), xytext=(4, 0), textcoords="offset points",
-                    color=INK2, va="center", fontsize=9)
     saved = torch.load(POLICY_DIR / f"{pair}_vi.pt", weights_only=False)
     vi_r = mean_round_reward(to_policy(saved), train_eps, saved["lam"], c)
     ax.axhline(vi_r, color=COL["vi"], lw=1.5, ls="--", label="Value Iteration (model-based, no episodes)")
@@ -98,37 +96,41 @@ def training_curves(pair, train_eps, c):
     save(fig, "training_curves", pair)
 
 
-def policy_grid(pair, algo, train_eps):
-    """Action (1 = STOP) over s x q-bin. Networks are queried with p, H, a at their median values."""
-    saved = torch.load(POLICY_DIR / f"{pair}_{algo}.pt", weights_only=False)
-    if saved["kind"] == "table":
-        return np.asarray(saved["table"])[1 : K + 1].astype(float)
-    pol = to_policy(saved)
-    p_med = float(np.median(np.concatenate([e["p"] for e in train_eps])))
-    H_med = float(np.median(np.concatenate([e["H"] for e in train_eps])))
-    grid = np.zeros((K, Q_BINS))
-    for s in range(1, K + 1):
-        for b in range(Q_BINS):
-            grid[s - 1, b] = pol([s / K, p_med, H_med, (b + 0.5) / Q_BINS, 0.7])
-    return grid
+def policy_grid(pair, algo, episodes, min_visits=20):
+    """Share of decisions that were STOP in each (s, q-bin) cell, measured by running the policy on the test
+    prompts (forced STOPs excluded). Same measure for tables and networks; NaN where a cell has < min_visits."""
+    pol = load_policy(pair, algo)
+    env = SpecEnv(episodes, 0.0, read_c(pair))
+    stop, n = np.zeros((K, Q_BINS)), np.zeros((K, Q_BINS))
+    for ep in episodes:
+        obs, done = env.reset(ep), False
+        while not done:
+            a = pol(obs)
+            if not (env.s >= env.K or env.t + env.s >= env.end):
+                s_, b = int(round(obs[0] * K)) - 1, min(int(obs[3] * Q_BINS), Q_BINS - 1)
+                n[s_, b] += 1
+                stop[s_, b] += a
+            obs, _, done, _ = env.step(a)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        return np.where(n >= min_visits, stop / n, np.nan)
 
 
-def heatmaps(pair, train_eps):
-    fig, axes = plt.subplots(1, 4, figsize=(12, 3.3), sharey=True)
-    cmap = matplotlib.colors.ListedColormap(["#cfe0f6", "#1b4f91"])  # CONTINUE light, STOP dark (one hue)
+def heatmaps(pair, test_eps):
+    fig, axes = plt.subplots(1, 4, figsize=(12, 3.6), sharey=True, constrained_layout=True)
+    cmap = matplotlib.colormaps["Blues"].copy()
+    cmap.set_bad("#efefec")
     for ax, algo in zip(axes, ALGOS):
-        g = policy_grid(pair, algo, train_eps)
-        ax.imshow(g, origin="lower", cmap=cmap, vmin=0, vmax=1, aspect="auto",
-                  extent=[0, 1, 0.5, K + 0.5])
+        g = policy_grid(pair, algo, test_eps)
+        im = ax.imshow(g[:-1], origin="lower", cmap=cmap, vmin=0, vmax=1, aspect="auto",
+                       extent=[0, 1, 0.5, K - 0.5])
         ax.set_title(NAMES[algo], loc="left", color=INK, fontsize=10)
         ax.set_xlabel("q (chance all drafts survive)")
         ax.grid(False)
     axes[0].set_ylabel("s (tokens drafted this round)")
-    handles = [matplotlib.patches.Patch(color="#cfe0f6", label="CONTINUE"),
-               matplotlib.patches.Patch(color="#1b4f91", label="STOP")]
-    fig.legend(handles=handles, loc="upper right", ncol=2, fontsize=9)
-    fig.suptitle(f"Learned stopping policy ({pair}). DQN/REINFORCE shown at median p, H", x=0.01, ha="left",
-                 color=INK, fontsize=11)
+    cb = fig.colorbar(im, ax=axes, shrink=0.85, pad=0.01)
+    cb.set_label("share of decisions = STOP", color=INK2)
+    fig.suptitle(f"What each agent does ({pair}, test prompts; grey = state rarely visited; s = 8 always stops)",
+                 x=0.01, ha="left", color=INK, fontsize=11)
     save(fig, "policy_heatmap", pair)
 
 
@@ -232,7 +234,7 @@ def main():
     train_eps, test_eps = load_logs(pair, "train"), load_logs(pair, "test")
 
     training_curves(pair, train_eps, c)
-    heatmaps(pair, train_eps)
+    heatmaps(pair, test_eps)
     per_task(pair, test_eps, c)
     lambda_sweep(pair, train_eps, test_eps, c)
     sim = sim_table(pair, test_eps, c)

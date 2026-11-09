@@ -1,6 +1,7 @@
 """Deep Q-Network: MLP 5->64->64->2 on [s/K, p, H, q, a], replay buffer, target network, Huber loss, Adam.
 
-Same per-round episodes as Q-learning (STOP ends the round, gamma = 1 inside a round).
+Same per-round episodes as Q-learning (STOP ends the round, gamma = 1 inside a round). In bootstrap targets,
+CONTINUE at s' = K is masked out: it is never trained (STOP is forced there), so its output is meaningless.
 """
 
 import random
@@ -10,7 +11,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from specrl.algos.common import STOP, feats, forced, mlp
+from specrl.algos.common import CONTINUE, STOP, feats, forced, mlp
 from specrl.env import SpecEnv
 
 
@@ -68,7 +69,9 @@ def train(
                 rew, d = torch.tensor(rew, dtype=torch.float32), torch.tensor(d, dtype=torch.float32)
                 q_sa = net(o).gather(1, act[:, None]).squeeze(1)
                 with torch.no_grad():
-                    target = rew + (1 - d) * tgt(o2).max(1).values
+                    q2 = tgt(o2)
+                    q2[o2[:, 0] > 0.999, CONTINUE] = -float("inf")  # s' = K: CONTINUE impossible (never trained)
+                    target = rew + (1 - d) * q2.max(1).values
                 loss = F.smooth_l1_loss(q_sa, target)
                 opt.zero_grad()
                 loss.backward()

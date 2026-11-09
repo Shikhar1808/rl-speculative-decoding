@@ -44,7 +44,7 @@ def _as_runner(m, cache):
 
 
 def _eos_ids(m):
-    gc = getattr(m, "model", m).generation_config
+    gc = (m.model if isinstance(m, GraphRunner) else m).generation_config
     e = gc.eos_token_id
     return set(e if isinstance(e, (list, tuple)) else [e])
 

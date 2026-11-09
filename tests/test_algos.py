@@ -36,3 +36,13 @@ def test_value_iteration_matches_or_beats_best_fixed_k():
     name, best = best_fixed_k(eps, c)
     pol = to_policy(ALGOS["vi"].train(eps, lam=best, c=c, K=K))
     assert evaluate(pol, eps, c)["throughput"] >= 0.99 * best, name
+
+
+def test_qlearning_close_to_value_iteration():
+    # regression: CONTINUE at s=K is impossible; if its untouched Q entry leaks into the bootstrap max,
+    # Q-learning learns "always continue" (found on real data: 1.28 vs VI 1.62)
+    eps, c = synthetic(), 0.2
+    _, lam = best_fixed_k(eps, c)
+    v = evaluate(to_policy(ALGOS["vi"].train(eps, lam=lam, c=c, K=K)), eps, c)["throughput"]
+    q = evaluate(to_policy(ALGOS["qlearn"].train(eps, lam=lam, c=c, K=K, n_episodes=3000, seed=0)), eps, c)["throughput"]
+    assert q >= 0.95 * v, (q, v)
