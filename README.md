@@ -27,7 +27,7 @@ uv run python -c "import torch; print(torch.cuda.is_available())"   # must print
 | 1. Log model outputs | `uv run python -m specrl.log_data --pair qwen` | GPU | `logs/*.npz` |
 | 2. Measure c | `uv run python -m specrl.measure_c --pair qwen` | GPU | `results/c_qwen.json` |
 | 3. Sim baselines | `uv run python -m specrl.baselines --pair qwen --c <c>` | CPU | `results/sim_baselines_*.csv` |
-| 4. Train agents | *(P4–P5)* | CPU | `policies/` |
+| 4. Train agents | `uv run python -m specrl.train --pair qwen --algo all` | CPU | `policies/`, `results/sim_rl_*.csv` |
 | 5. Live benchmark | *(P6)* | GPU | `results/*.csv` |
 | 6. Figures | *(P7)* | CPU | `figures/` |
 | 7. Demo | *(P8)* | GPU | Gradio app |
@@ -52,6 +52,7 @@ results/ figures/       generated, committed (the report uses them)
 | [01_setup.md](docs/01_setup.md) | Install on a new PC, CUDA check |
 | [02_mdp.md](docs/02_mdp.md) | State, actions, reward, c, λ, sim speedup |
 | [03_simulator.md](docs/03_simulator.md) | Prompts, logging, simulator, baselines |
+| [04_algorithms.md](docs/04_algorithms.md) | VI, Q-learning, DQN, REINFORCE: settings, per-round episodes, λ tuning |
 | [07_report.md](docs/07_report.md) | How the LaTeX report is organised and synced with Overleaf |
 
 More pages (MDP, simulator, algorithms, live benchmark, results) are added with each phase.
