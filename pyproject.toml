@@ -1,0 +1,39 @@
+[project]
+name = "specrl"
+version = "0.1.0"
+description = "RL agents that learn when to stop drafting in speculative decoding"
+readme = "README.md"
+authors = [
+    { name = "Shikhar1808", email = "saxena.shikhar1808@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "accelerate>=1.15.0",
+    "datasets>=5.1.0",
+    "gradio>=6.31.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "pandas>=3.1.1",
+    "torch>=2.11.0",
+    "transformers>=5.22.2",
+]
+
+[project.scripts]
+specrl = "specrl:main"
+
+[build-system]
+requires = ["uv_build>=0.11.16,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]

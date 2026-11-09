@@ -1,0 +1,31 @@
+\section{Experimental setup}
+
+The main measure is real wall-clock speedup over the target model alone, measured on the same machine. The other metrics explain where that speedup comes from.
+
+\begin{table}[h]
+\centering
+\caption{Metrics.}
+\label{tab:metrics}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Metric & Meaning \\
+\midrule
+Speedup & Tokens/sec of a method $\div$ tokens/sec of the target alone (live, same PC) \\
+Mean accepted length & Average tokens gained per target call ($n+1$) \\
+Simulated reward & Average episode reward in the simulator, on train and test prompts \\
+Training cost & Episodes and wall time each algorithm needs to converge \\
+Simulation-vs-live gap & Whether the simulator ranks methods in the same order as the live benchmark \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Hypotheses.}
+\begin{enumerate}
+  \item All four RL agents will match or beat the best fixed-$k$ baseline, because they can adapt draft length to the text.
+  \item Value Iteration will be the strongest tabular method, since it plans with an estimated model, and Q-learning will approach it with enough samples.
+  \item DQN and REINFORCE will gain from the richer continuous state (entropy, acceptance rate), with REINFORCE showing noisier training.
+  \item The learned policies will look like a threshold on $q$, matching the theory.
+  \item Speedups will be larger on the SmolLM2 pair (12$\times$ size gap) than on the Qwen pair (3$\times$ gap).
+\end{enumerate}
+
+\todo{hardware details of the benchmark PC, software versions (PyTorch, transformers, CUDA), training hyperparameters.}

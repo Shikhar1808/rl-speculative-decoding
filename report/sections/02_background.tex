@@ -1,0 +1,27 @@
+\section{Background: speculative decoding}
+
+Each round of greedy speculative decoding yields $n+1$ tokens for one target call, where $n$ is the number of drafted tokens the target agrees with.
+\begin{enumerate}
+  \item The draft model generates tokens $d_1, d_2, \dots, d_k$ one by one (cheap).
+  \item The target model runs once on the context plus $d_1 \dots d_k$ and gives its own greedy choice at every position.
+  \item Drafts are accepted left to right while they match the target's choice. Call the number accepted $n$.
+  \item The target's own token at position $n+1$ is gained for free, either as a correction or as a bonus when all $k$ drafts were accepted.
+\end{enumerate}
+The result is identical to running the target alone, because every kept token is one the target would have chosen.
+
+\begin{table}[h]
+\centering
+\caption{Existing rules for choosing the draft length $k$.}
+\label{tab:existing-rules}
+\begin{tabularx}{\linewidth}{@{}lXX@{}}
+\toprule
+Rule & How it decides when to stop & Weakness \\
+\midrule
+Fixed $k$ & Always drafts $k$ tokens (often $k=4$ or $5$) & Ignores how easy the current text is \\
+Confidence threshold (HuggingFace)~\citep{hfdynamic} & Stops when the draft's top-token probability falls below 0.4 & One hand-picked number for every model pair and task \\
+SpecDec++~\citep{huang2024specdecpp} & Stops when the estimated chance that a draft has already been rejected crosses a threshold & Needs a separately trained acceptance predictor \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+SpecDec++ shows that the optimal stopping rule is a threshold on the probability that a rejection has already happened. This gives us a theoretical yardstick: a well-trained RL agent should rediscover a threshold-like policy on its own, and we check whether it does.

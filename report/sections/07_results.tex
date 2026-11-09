@@ -1,0 +1,37 @@
+\section{Results}
+% Filled after phases P6-P7. Numbers come from results/*.csv; figures from figures/.
+
+\begin{table}[h]
+\centering
+\caption{Main results. \todo{fill from \texttt{results/*.csv}.}}
+\label{tab:main-results}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & Speedup (Qwen) & Speedup (SmolLM2) & Mean accepted length & Sim reward \\
+\midrule
+Target alone        & 1.00$\times$ & 1.00$\times$ & 1.00 & -- \\
+Fixed $k=4$         & & & & \\
+Best fixed $k$      & & & & \\
+Threshold 0.4       & & & & \\
+Value Iteration     & & & & \\
+Q-learning          & & & & \\
+DQN                 & & & & \\
+REINFORCE           & & & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Training curves.} \todo{Figure: reward vs episodes, all four algorithms.}
+
+\paragraph{What the agent learned.} \todo{Figure: policy heatmap over $(s, q)$. Does it form a threshold, as SpecDec++ predicts?}
+
+\paragraph{Per-task behaviour.} \todo{Does the agent draft longer on code than on chat? Per-task table.}
+
+\paragraph{Effect of $\lambda$.} \todo{$\lambda$ sweep figure.}
+
+\paragraph{Transfer.} \todo{Does a policy trained on the Qwen pair work on the SmolLM2 pair?}
+
+\paragraph{Simulator vs live.} \todo{Do both rank the methods the same way?}
+
+\paragraph{Hypotheses revisited.} \todo{Which of the five hypotheses held.}

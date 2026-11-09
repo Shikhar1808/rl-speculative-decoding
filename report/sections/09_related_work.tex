@@ -1,0 +1,22 @@
+\section{Related work and our contribution}
+
+Learning the draft length is an active research topic. Our contribution is a controlled, side-by-side comparison of four classic RL families on the same task, run on consumer hardware, with a simulator and a live demo.
+
+\begin{table}[h]
+\centering
+\caption{Related work.}
+\label{tab:related}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright}p{3.6cm}XX@{}}
+\toprule
+Work & Approach & Relation to this project \\
+\midrule
+Leviathan et al.~\citep{leviathan2023fast}; Chen et al.~\citep{chen2023accelerating} & Original speculative decoding and speculative sampling & The decoding scheme we control \\
+SpecDec++~\citep{huang2024specdecpp} & Draft length as an MDP; proves a threshold stopping rule is optimal & Theory our learned policies are checked against \\
+Learning to Draft~\citep{ltd2026} & RL that learns draft depth with a throughput reward & Closest prior work. We compare DP, TD, DQN and policy gradient side by side on small models \\
+DISCO~\citep{mamou2024disco} & A classifier that picks the draft length each round & Supervised alternative to RL \\
+BanditSpec~\citep{banditspec2025} & Bandit algorithms (UCB, EXP3) choose the speculation length & Simpler, state-free alternative \\
+HuggingFace dynamic speculation~\citep{hfdynamic} & Stops drafting when confidence $< 0.4$ & Our threshold baseline \\
+\bottomrule
+\end{tabularx}
+\end{table}

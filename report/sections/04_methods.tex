@@ -1,0 +1,34 @@
+\section{Methods: four RL algorithms}
+
+We solve the same MDP with four algorithms, chosen so that each pair of them contrasts one idea from the course~\citep{sutton2018}.
+
+\begin{table}[h]
+\centering
+\caption{The four algorithms. \todo{update hyperparameters to the final values used.}}
+\label{tab:algos}
+\small
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright}p{2.6cm}>{\raggedright}p{3cm}X@{}}
+\toprule
+Algorithm & Course topic & State & Key details \\
+\midrule
+Value Iteration & Dynamic programming, Bellman equations & Tabular: $s$ (1--8) $\times$ 10 bins of $q$ = 80 states & Transition probabilities and expected rewards estimated by counting in the logs, then repeated Bellman optimality updates. A model-based, near-optimal reference \\
+Q-learning & Temporal-difference learning & Same 80 tabular states & $Q(s,a) \leftarrow Q(s,a) + \alpha[r + \gamma \max Q(s',\cdot) - Q(s,a)]$, $\varepsilon$-greedy exploration with decaying $\varepsilon$ \\
+DQN~\citep{mnih2015} & Function approximation, deep RL & Continuous features $[s/8, p, H, q, a]$ & MLP 5$\to$64$\to$64$\to$2, experience replay, target network, Huber loss, Adam \\
+REINFORCE~\citep{williams1992} & Policy gradient & Same continuous features & Softmax policy MLP 5$\to$64$\to$2, Monte Carlo returns with a mean-return baseline to reduce variance \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Comparison axes.}
+\begin{itemize}
+  \item Model-based (Value Iteration) vs model-free (Q-learning).
+  \item Tabular (Q-learning) vs function approximation (DQN).
+  \item Value-based (DQN) vs policy-based (REINFORCE).
+\end{itemize}
+
+\paragraph{Baselines (not RL).}
+\begin{itemize}
+  \item Target model alone, with no speculation (speedup $= 1.0\times$ by definition).
+  \item Fixed draft length $k = 1$ to $8$.
+  \item Confidence threshold: stop when $p < 0.4$, as in HuggingFace's dynamic speculation~\citep{hfdynamic}.
+\end{itemize}
