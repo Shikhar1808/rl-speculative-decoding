@@ -2,3 +2,15 @@
   qlearn seed 0: test sim speedup 1.594
   qlearn seed 1: test sim speedup 1.578
   qlearn seed 2: test sim speedup 1.584
+  dqn seed 0: test sim speedup 1.626
+  dqn seed 1: test sim speedup 1.608
+  dqn seed 2: test sim speedup 1.633
+  reinforce seed 0: test sim speedup 1.643
+  reinforce seed 1: test sim speedup 1.652
+  reinforce seed 2: test sim speedup 1.652
+            mean    std    min    max  count
+method                                      
+dqn        1.623  0.013  1.608  1.633      3
+qlearn     1.586  0.008  1.578  1.594      3
+reinforce  1.649  0.005  1.643  1.652      3
+vi         1.657    NaN  1.657  1.657      1

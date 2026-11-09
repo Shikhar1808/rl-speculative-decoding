@@ -144,9 +144,26 @@ Time for the second of two Dinkelbach rounds, laptop CPU, no GPU.
   1.94× SmolLM2). It sees 5 continuous features instead of 2 binned ones, including the latest token's
   confidence p and entropy H, and generalises across similar states instead of learning 80 cells
   separately. Cost: ~20× more training time.
-- **Value-based vs policy-based (DQN vs REINFORCE).** About a tie (1.63× vs 1.64× Qwen; 2.01× vs 2.01×
-  SmolLM2). REINFORCE's curve rises fastest early (`figures/training_curves_*.png`); per-round episodes keep
-  its variance low, so the usual "policy gradient is noisy" disadvantage barely shows here.
+- **Value-based vs policy-based (DQN vs REINFORCE).** REINFORCE beats DQN on Qwen for every seed
+  (1.649 vs 1.623 mean, section 4b); on SmolLM2 they are within seed noise. REINFORCE's curve rises fastest
+  early (`figures/training_curves_*.png`) and its seed spread is small (smallest of all on Qwen): per-round
+  episodes keep its variance low, so the usual "policy gradient is noisy" disadvantage does not show here.
+
+### 4b. Robustness across seeds
+
+`results/seeds_<pair>.csv` (`uv run python -m specrl.seeds --pair <pair> --seeds 3`). Simulator test speedup,
+mean ± std (min–max) over 3 training seeds; Value Iteration has no randomness. Live numbers use seed 0.
+
+| Algorithm | Qwen | SmolLM2 |
+|---|---|---|
+| Value Iteration | 1.657 (deterministic) | 2.019 (deterministic) |
+| REINFORCE | 1.649 ± 0.005 (1.643–1.652) | 2.011 ± 0.008 (2.005–2.020) |
+| DQN | 1.623 ± 0.013 (1.608–1.633) | 2.015 ± 0.005 (2.010–2.019) |
+| Q-learning | 1.586 ± 0.008 (1.578–1.594) | 1.928 ± 0.022 (1.903–1.942) |
+
+- **Q-learning is last on both pairs for every seed**: the model-free tabular method is clearly weakest.
+- **Qwen: Value Iteration > REINFORCE > DQN for every seed** (ranges do not overlap).
+- **SmolLM2: Value Iteration, DQN and REINFORCE overlap** (2.01–2.02×): their differences there are noise.
 
 ### A bug the comparison exposed
 
@@ -255,7 +272,7 @@ optimistic.**
 |---|---|---|
 | 1 | All four RL agents match or beat the best fixed-k baseline | **Yes**, live and simulated, both pairs. Live: +6% to +9% over best fixed k (Qwen 1.47–1.51× vs 1.38×), +6% to +11% (SmolLM2 1.67–1.75× vs 1.57×) |
 | 2 | Value Iteration is the strongest tabular method; Q-learning approaches it | **Yes**: VI 1.66× vs QL 1.59× (Qwen), 2.02× vs 1.94× (SmolLM2) |
-| 3 | DQN and REINFORCE gain from the richer state; REINFORCE trains noisier | **Partly**: both beat Q-learning but not Value Iteration; REINFORCE was not noisier with per-round episodes |
+| 3 | DQN and REINFORCE gain from the richer state; REINFORCE trains noisier | **Partly**: both beat Q-learning on every seed but not Value Iteration; REINFORCE was not noisier than DQN across seeds (least noisy on Qwen; per-round episodes) |
 | 4 | Learned policies look like a threshold on q | **Yes** (section 5) |
 | 5 | Speedups larger on SmolLM2 (12× size gap) than on Qwen (3×) | **Yes**: live 1.67–1.75× vs 1.47–1.51×; simulated ~2.0× vs ~1.6× |
 
@@ -273,5 +290,5 @@ No difference at a clear gap, so no acceptance or cache bug (`tests/test_specdec
 - Simulator approximation: drafts after the first rejected token see the true text, not the draft's own
   mistake. `n` is exact; only the p and H the agent sees after a rejection can differ. The simulator is also
   8–14% optimistic because it ignores per-step overhead (section 9).
-- One seed per algorithm; gaps of 1–2% between DQN, REINFORCE and Value Iteration are within what a
-  different seed could change.
+- Three seeds per algorithm (simulator). On SmolLM2 the top three methods are within seed noise; the live
+  benchmark uses one seed (seed 0) per algorithm.

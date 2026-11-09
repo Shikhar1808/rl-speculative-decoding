@@ -20,3 +20,6 @@ report/*.out
 report/*.bbl
 report/*.blg
 report/*.pdf
+
+# Private study notes (not part of the submission)
+VIVA_PREP.pdf

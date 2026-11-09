@@ -49,10 +49,13 @@ choose policies, but its absolute speedups are optimistic.}
   Q-learning but not Value Iteration, and with per-round episodes REINFORCE was not noisier.
   \item \emph{The learned policies look like a threshold on $q$}: confirmed (Figure~\ref{fig:heatmap}).
   \item \emph{Speedups are larger on the SmolLM2 pair}: confirmed (1.75$\times$ vs 1.51$\times$ live).
-\end{enumerate}
-\seedSentence}
+\end{enumerate}}
 
-\newcommand{\seedSentence}{\todo{seed robustness sentence}}
+\newcommand{\seedSentence}{%
+Retraining Q-learning, DQN and REINFORCE with three seeds each (Table~\ref{tab:seeds}) confirms the ranking where
+the gaps are large: Q-learning is last on both pairs for every seed, and on Qwen the order Value Iteration $>$
+REINFORCE $>$ DQN holds for every seed. On SmolLM2, Value Iteration, DQN and REINFORCE lie within each other's
+seed ranges (2.01--2.02$\times$), so their differences there are noise.}
 
 \newcommand{\conclusionParagraph}{%
 All four algorithms learned useful stopping rules from a simulator built in minutes, and all of them beat

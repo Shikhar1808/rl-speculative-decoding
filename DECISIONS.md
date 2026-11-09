@@ -62,6 +62,7 @@ Newest at the bottom. "D#" items refer to PLAN.md. Read this first if something 
 | 39 | Figures: policy heatmap now shows the **share of STOP decisions per (s, q) cell observed on test prompts**, not the network's output at fixed median p, H | the median slice made REINFORCE look like "always continue", which is not what it does; the observed share is one honest measure for tables and networks alike |
 | 40 | Logs (`logs/*.npz`, ~1 MB each) and trained policies (`policies/`) are now committed | small; teammates and demo day need them without re-running the GPU steps |
 | 41 | With time until the evening (your message 02:45): full live benchmark (30 prompts × 3 runs, both pairs) + **3 seeds** for Q-learning, DQN, REINFORCE (`specrl.seeds`) | checks whether the 1–2% gaps between algorithms are real; seed-0 policies stay the ones used live |
+| 42 | Angad Shukla's roll number 102316053 (from you) added to the report title page and, at your request, to the proposal doc (the only edit made to that doc) | — |
 | 32 | **Only this PC is used** (your instruction); all timings, both model pairs, training and the demo run on the RTX 3050 laptop | — |
 
 ## 10 Nov — problems hit

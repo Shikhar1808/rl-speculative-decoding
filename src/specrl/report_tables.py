@@ -143,6 +143,26 @@ def training_table():
     return "\n".join(lines)
 
 
+def seeds_table():
+    """Simulator test speedup over seeds: mean ± std (min–max)."""
+    data = {p: read(f"seeds_{p}.csv") for p in PAIRS}
+    if any(d is None for d in data.values()):
+        return None
+    lines = [r"\begin{tabular}{@{}lcc@{}}", r"\toprule",
+             r"Algorithm & Qwen & SmolLM2 \\", r"\midrule"]
+    for m in RL:
+        cells = []
+        for p in ("qwen", "smol"):
+            v = data[p][data[p].method == m].test_sim_speedup
+            if len(v) == 1:
+                cells.append(f"{v.iloc[0]:.3f} (deterministic)")
+            else:
+                cells.append(f"{v.mean():.3f} $\\pm$ {v.std():.3f} ({v.min():.3f}--{v.max():.3f})")
+        lines.append(f"{name(m)} & " + " & ".join(cells) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines)
+
+
 def c_values():
     out = {}
     for p in PAIRS:
@@ -156,6 +176,9 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "main_results.tex").write_text(main_table())
     (OUT / "training.tex").write_text(training_table())
+    st = seeds_table()
+    if st:
+        (OUT / "seeds.tex").write_text(st)
     for p in PAIRS:
         t = per_task_table(p)
         if t:

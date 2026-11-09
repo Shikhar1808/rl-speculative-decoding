@@ -41,8 +41,9 @@ every method, including the target-alone baseline.
   \item \textbf{Tabular vs function approximation.} DQN beats Q-learning: it sees five continuous features,
   including the latest token's confidence $p$ and the entropy $H$, and generalises across similar states, at
   about 20 times the training cost (Table~\ref{tab:training}).
-  \item \textbf{Value-based vs policy-based.} DQN and REINFORCE are within 1\% of each other. Per-round
-  episodes keep REINFORCE's variance low, and its training curve rises fastest (Figure~\ref{fig:curves}).
+  \item \textbf{Value-based vs policy-based.} REINFORCE beats DQN on Qwen for every seed (1.649 vs 1.623
+  mean); on SmolLM2 they are within seed noise (Table~\ref{tab:seeds}). Per-round episodes keep REINFORCE's
+  variance low (its seed spread is the smallest on Qwen), and its training curve rises fastest (Figure~\ref{fig:curves}).
 \end{itemize}
 
 \begin{table}[h]
@@ -110,6 +111,19 @@ On 20 test prompts and four policies, 16--18 of 20 speculative outputs were iden
 greedy output. Every difference started at an exact near-tie of the target's top two tokens (logit gap
 0.000--0.016), where fp16 rounding of a multi-token verify pass differs from one-token steps; none occurred
 at a clear gap, so the acceptance and cache logic are correct.
+
+\subsection{Robustness across seeds}
+
+\begin{table}[h]
+\centering
+\caption{Simulator test speedup over three training seeds: mean $\pm$ standard deviation (min--max).
+Value Iteration has no randomness. The live benchmark uses the seed-0 policies.}
+\label{tab:seeds}
+\small
+\input{generated/seeds}
+\end{table}
+
+\seedSentence
 
 \subsection{Hypotheses revisited}
 \hypothesesParagraph
