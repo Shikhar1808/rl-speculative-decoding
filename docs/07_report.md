@@ -2,7 +2,7 @@
 
 The report is compiled on **Overleaf** (no TeX is installed locally). Its sources sit in a local `report/` folder
 that git ignores, so a fresh clone does not have it: get the files from the Overleaf project (Menu → Download →
-Source) or from `report_overleaf.zip`. `uv run python -m specrl.report_tables` still writes tables and figures into
+Source) or from `report_overleaf.zip`. `uv run python -m specrl.analysis.report_tables` still writes tables and figures into
 `report/`.
 
 ## Files

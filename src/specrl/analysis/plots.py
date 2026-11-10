@@ -1,7 +1,7 @@
 """All figures for the report and slides (docs/06_results.md). CPU only; reads logs/, policies/, results/.
 
 Usage:
-    uv run python -m specrl.plots --pair qwen
+    uv run python -m specrl.analysis.plots --pair qwen
 Writes figures/<name>_<pair>.png and the analysis tables results/sim_per_task_<pair>.csv,
 results/lambda_sweep_<pair>.csv.
 
@@ -20,12 +20,12 @@ import torch  # noqa: E402
 
 from specrl.algos.common import Q_BINS, forced, tab_state  # noqa: E402
 from specrl.algos import vi  # noqa: E402
-from specrl.baselines import baseline_policies  # noqa: E402
+from specrl.sim.baselines import baseline_policies  # noqa: E402
 from specrl.config import ALGO_NAMES as NAMES  # noqa: E402
 from specrl.config import FIG_DIR, K, PAIRS, POLICY_DIR, RESULTS_DIR  # noqa: E402
-from specrl.env import SpecEnv, evaluate  # noqa: E402
-from specrl.log_data import load_logs  # noqa: E402
-from specrl.train import ALGOS, load_policy, read_c, to_policy  # noqa: E402
+from specrl.sim.env import SpecEnv, evaluate  # noqa: E402
+from specrl.data.log_data import load_logs  # noqa: E402
+from specrl.algos.train import ALGOS, load_policy, read_c, to_policy  # noqa: E402
 
 # reference categorical palette (dataviz skill), fixed slot per algorithm
 COL = {"vi": "#2a78d6", "qlearn": "#eb6834", "dqn": "#1baf7a", "reinforce": "#6250d6"}

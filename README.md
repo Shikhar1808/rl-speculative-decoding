@@ -11,7 +11,7 @@ Course project, Thapar Institute — Shikhar Saxena, Vaibhav Sundriyal, Angad Sh
 | [docs/06_results.md](docs/06_results.md) | **All results**, how each algorithm works, the comparison |
 | [DECISIONS.md](DECISIONS.md) | Every decision and problem hit, with reasons — read this if something looks wrong |
 | Report | LaTeX report + Beamer slides, on Overleaf; not in git ([docs/07_report.md](docs/07_report.md)) |
-| [PLAN.md](PLAN.md) | Original plan and phases |
+| [docs/00_plan.md](docs/00_plan.md) | Original plan and phases |
 | Proposal doc | https://claude.ai/artifact/Ng8gGdLpuKhmK7CWns2pqK |
 
 ## Quick start
@@ -30,15 +30,15 @@ Run for each pair (`qwen`, then `smol`). Times are on the RTX 3050 laptop.
 
 | Step | Command | Runs on | Time | Output |
 |---|---|---|---|---|
-| 0. Build prompts (done, committed) | `uv run python -m specrl.prompts` | CPU | 1 min | `data/prompts.jsonl` |
-| 1. Log model outputs | `uv run python -m specrl.log_data --pair qwen` | GPU | 7 min | `logs/qwen_0-498.npz` |
-| 2. Measure c | `uv run python -m specrl.measure_c --pair qwen` | GPU | 1 min | `results/c_qwen.json` |
-| 3. Sim baselines | `uv run python -m specrl.baselines --pair qwen --c <c> --split test` | CPU | 10 s | `results/sim_baselines_*.csv` |
-| 4. Train agents | `uv run python -m specrl.train --pair qwen --algo all` | CPU | 12 min | `policies/`, `results/sim_rl_*.csv`, `results/curve_*.csv` |
-| 5. Seed check | `uv run python -m specrl.seeds --pair qwen --seeds 3` | CPU | 30 min | `results/seeds_*.csv` |
-| 6. Live benchmark | `uv run python -m specrl.bench --pair qwen` | GPU | 30 min | `results/live_*.csv` |
-| 7. Figures | `uv run python -m specrl.plots --pair qwen` | CPU | 2 min | `figures/*.png`, analysis CSVs |
-| 8. Report tables | `uv run python -m specrl.report_tables` | CPU | 5 s | `report/generated/`, `report/figures/` |
+| 0. Build prompts (done, committed) | `uv run python -m specrl.data.prompts` | CPU | 1 min | `data/prompts.jsonl` |
+| 1. Log model outputs | `uv run python -m specrl.data.log_data --pair qwen` | GPU | 7 min | `logs/qwen_0-498.npz` |
+| 2. Measure c | `uv run python -m specrl.live.measure_c --pair qwen` | GPU | 1 min | `results/c_qwen.json` |
+| 3. Sim baselines | `uv run python -m specrl.sim.baselines --pair qwen --c <c> --split test` | CPU | 10 s | `results/sim_baselines_*.csv` |
+| 4. Train agents | `uv run python -m specrl.algos.train --pair qwen --algo all` | CPU | 12 min | `policies/`, `results/sim_rl_*.csv`, `results/curve_*.csv` |
+| 5. Seed check | `uv run python -m specrl.algos.seeds --pair qwen --seeds 3` | CPU | 30 min | `results/seeds_*.csv` |
+| 6. Live benchmark | `uv run python -m specrl.live.bench --pair qwen` | GPU | 30 min | `results/live_*.csv` |
+| 7. Figures | `uv run python -m specrl.analysis.plots --pair qwen` | CPU | 2 min | `figures/*.png`, analysis CSVs |
+| 8. Report tables | `uv run python -m specrl.analysis.report_tables` | CPU | 5 s | `report/generated/`, `report/figures/` |
 | 9. Demo | `uv run python -m specrl.app` | GPU | — | Gradio app at localhost:7860 |
 
 Tests: `uv run pytest tests/test_env.py tests/test_algos.py` (CPU, ~3 min) and
@@ -48,19 +48,23 @@ Tests: `uv run pytest tests/test_env.py tests/test_algos.py` (CPU, ~3 min) and
 
 ```
 src/specrl/
-  config.py        model pairs, paths, K, answer length
-  prompts.py       build the prompt set            log_data.py   logging pass (batched)
-  env.py           simulator + evaluate()          baselines.py  fixed k, threshold 0.4
-  algos/           vi.py qlearn.py dqn.py reinforce.py common.py
-  train.py         training + Dinkelbach λ         seeds.py      multi-seed check
-  fastmodel.py     CUDA-graph runner               specdec.py    live speculative decoding
-  measure_c.py     c on this GPU                   bench.py      live benchmark
-  plots.py         figures                         report_tables.py  LaTeX tables
-  app.py           Gradio race demo
+  config.py          model pairs, paths, K, answer length, algorithm names
+  data/              step 1-2   prompts.py (prompt set), log_data.py (logging pass, batched)
+  sim/               step 3     env.py (simulator + evaluate()), baselines.py (fixed k, threshold 0.4)
+  algos/             step 4     vi.py qlearn.py dqn.py reinforce.py common.py,
+                                train.py (training + Dinkelbach λ), seeds.py (multi-seed check)
+  live/              step 5     fastmodel.py (CUDA graphs), specdec.py (speculative decoding),
+                                measure_c.py (c on this GPU), bench.py (live benchmark)
+  analysis/          step 6     plots.py (figures), report_tables.py (LaTeX tables)
+  app.py             Gradio race demo
 tests/        test_env.py, test_algos.py (CPU), test_specdec.py (GPU)
 docs/         one page per part of the system
 report/       LaTeX report + slides (local only, git-ignored; lives on Overleaf)
-data/ results/ figures/   committed     logs/ policies/   generated, not committed
+data/         prompts.jsonl: the 498 prompts with their train/test split
+logs/         <pair>_0-498.npz: per-token draft confidence, entropy, match (the simulator's input)
+policies/     <pair>_<algo>.pt: trained agents used by the benchmark and demo
+results/      every number in the report (CSV/JSON); results/run_logs/ = console output of the long runs
+figures/      every plot (PNG), copied into report/figures by report_tables
 ```
 
 ## Docs

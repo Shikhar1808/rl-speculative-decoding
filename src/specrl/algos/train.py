@@ -4,11 +4,11 @@
     train with lambda_0 -> measure throughput lambda_1 -> retrain with lambda_1   (--rounds 2, default)
 
 Usage:
-    uv run python -m specrl.train --pair qwen --algo vi
-    uv run python -m specrl.train --pair qwen --algo all
-    uv run python -m specrl.train --pair qwen --algo dqn --lam 2.5 --rounds 1     # fixed lambda (sweeps)
+    uv run python -m specrl.algos.train --pair qwen --algo vi
+    uv run python -m specrl.algos.train --pair qwen --algo all
+    uv run python -m specrl.algos.train --pair qwen --algo dqn --lam 2.5 --rounds 1     # fixed lambda (sweeps)
 
-c is read from results/c_<pair>.json (specrl.measure_c) unless --c is given.
+c is read from results/c_<pair>.json (specrl.live.measure_c) unless --c is given.
 Outputs: policies/<pair>_<algo>.pt, results/curve_<pair>_<algo>.csv, rows in results/sim_rl_<pair>.csv
 """
 
@@ -22,10 +22,10 @@ import torch
 
 from specrl.algos import dqn, qlearn, reinforce, vi
 from specrl.algos.common import NetPolicy, TablePolicy, mlp
-from specrl.baselines import baseline_policies
+from specrl.sim.baselines import baseline_policies
 from specrl.config import K, PAIRS, POLICY_DIR, RESULTS_DIR
-from specrl.env import evaluate
-from specrl.log_data import load_logs
+from specrl.sim.env import evaluate
+from specrl.data.log_data import load_logs
 
 ALGOS = {"vi": vi, "qlearn": qlearn, "dqn": dqn, "reinforce": reinforce}
 
@@ -46,7 +46,7 @@ def load_policy(pair, algo):
 def read_c(pair):
     f = RESULTS_DIR / f"c_{pair}.json"
     if not f.exists():
-        raise SystemExit(f"{f} missing: run `uv run python -m specrl.measure_c --pair {pair}` or pass --c")
+        raise SystemExit(f"{f} missing: run `uv run python -m specrl.live.measure_c --pair {pair}` or pass --c")
     return json.loads(f.read_text())["c"]
 
 

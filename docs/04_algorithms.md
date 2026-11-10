@@ -1,11 +1,11 @@
 # The four algorithms
 
 All four learn the same stopping decision in the simulator ([02_mdp.md](02_mdp.md)) on the **train** split,
-and are scored on the **test** split. Code: `src/specrl/algos/`, entry point `src/specrl/train.py`.
+and are scored on the **test** split. Code: `src/specrl/algos/`, entry point `src/specrl/algos/train.py`.
 
 ```bash
-uv run python -m specrl.train --pair qwen --algo all        # all four, Dinkelbach lambda, ~minutes on CPU
-uv run python -m specrl.train --pair qwen --algo dqn --lam 2.5 --rounds 1   # one algo, fixed lambda
+uv run python -m specrl.algos.train --pair qwen --algo all        # all four, Dinkelbach lambda, ~minutes on CPU
+uv run python -m specrl.algos.train --pair qwen --algo dqn --lam 2.5 --rounds 1   # one algo, fixed lambda
 ```
 
 | Algorithm | Course topic | State | Key settings |

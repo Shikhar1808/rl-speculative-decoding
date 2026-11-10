@@ -20,12 +20,12 @@ import time
 import gradio as gr
 import torch
 
-from specrl.baselines import fixed_k, threshold
+from specrl.sim.baselines import fixed_k, threshold
 from specrl.config import ALGO_NAMES as NAMES
 from specrl.config import MAX_NEW_TOKENS, PAIRS
-from specrl.log_data import encode
-from specrl.specdec import load_fast_pair, spec_generate, target_generate
-from specrl.train import ALGOS, load_policy
+from specrl.data.log_data import encode
+from specrl.live.specdec import load_fast_pair, spec_generate, target_generate
+from specrl.algos.train import ALGOS, load_policy
 
 FRAME = 0.05  # seconds between replay frames
 BOX = ("font-family:ui-monospace,Consolas,monospace;font-size:14px;line-height:1.7;white-space:pre-wrap;"

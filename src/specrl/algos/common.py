@@ -5,7 +5,7 @@ import torch
 from torch import nn
 
 from specrl.config import K
-from specrl.env import CONTINUE, STOP
+from specrl.sim.env import CONTINUE, STOP
 
 Q_BINS = 10
 

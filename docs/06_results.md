@@ -151,7 +151,7 @@ Time for the second of two Dinkelbach rounds, laptop CPU, no GPU.
 
 ### 4b. Robustness across seeds
 
-`results/seeds_<pair>.csv` (`uv run python -m specrl.seeds --pair <pair> --seeds 3`). Simulator test speedup,
+`results/seeds_<pair>.csv` (`uv run python -m specrl.algos.seeds --pair <pair> --seeds 3`). Simulator test speedup,
 mean ± std (min–max) over 3 training seeds; Value Iteration has no randomness. Live numbers use seed 0.
 
 | Algorithm | Qwen | SmolLM2 |

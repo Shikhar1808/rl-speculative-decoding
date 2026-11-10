@@ -5,7 +5,7 @@ seeds 0..N-1 using the same Dinkelbach recipe as train.py; saved policies (seed 
 and demo) are NOT overwritten.
 
 Usage:
-    uv run python -m specrl.seeds --pair qwen --seeds 3
+    uv run python -m specrl.algos.seeds --pair qwen --seeds 3
 Writes results/seeds_<pair>.csv (one row per algorithm x seed) and prints mean ± std of the test speedup.
 """
 
@@ -14,9 +14,9 @@ import argparse
 import pandas as pd
 
 from specrl.config import K, PAIRS, RESULTS_DIR
-from specrl.env import evaluate
-from specrl.log_data import load_logs
-from specrl.train import ALGOS, best_fixed_k, read_c, to_policy
+from specrl.sim.env import evaluate
+from specrl.data.log_data import load_logs
+from specrl.algos.train import ALGOS, best_fixed_k, read_c, to_policy
 
 
 def run(pair, n_seeds, rounds=2):

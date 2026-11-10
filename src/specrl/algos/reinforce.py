@@ -9,7 +9,7 @@ import numpy as np
 import torch
 
 from specrl.algos.common import STOP, feats, forced, mlp
-from specrl.env import SpecEnv
+from specrl.sim.env import SpecEnv
 
 
 def train(episodes, lam, c, K, n_episodes=3000, lr=1e-3, seed=0, log_every=50, **_):

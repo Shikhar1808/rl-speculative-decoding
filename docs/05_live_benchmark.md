@@ -1,7 +1,7 @@
 # Live speculative decoding and the benchmark
 
 The simulator trains the agents; this part proves the speedup is real on the GPU and that the output is
-unchanged. Code: `src/specrl/specdec.py`, `src/specrl/fastmodel.py`, `src/specrl/bench.py`, test
+unchanged. Code: `src/specrl/live/specdec.py`, `src/specrl/live/fastmodel.py`, `src/specrl/live/bench.py`, test
 `tests/test_specdec.py`.
 
 ## Why CUDA graphs (read this first)
@@ -68,7 +68,7 @@ two paths round differently, and when the top two tokens are almost tied the arg
 ## Benchmark (`bench.py`)
 
 ```bash
-uv run python -m specrl.bench --pair qwen      # 30 test prompts (10 per task), 3 warm-ups, 3 runs
+uv run python -m specrl.live.bench --pair qwen      # 30 test prompts (10 per task), 3 warm-ups, 3 runs
 ```
 
 | Rule | Why |

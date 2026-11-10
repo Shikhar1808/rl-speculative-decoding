@@ -20,8 +20,8 @@ from transformers import DynamicCache
 
 from specrl.config import K as K_DEFAULT
 from specrl.config import MAX_NEW_TOKENS
-from specrl.env import CONTINUE, STOP
-from specrl.fastmodel import GraphRunner
+from specrl.sim.env import CONTINUE, STOP
+from specrl.live.fastmodel import GraphRunner
 
 
 def crop_to(cache, n):
@@ -33,7 +33,7 @@ def crop_to(cache, n):
 
 def load_fast_pair(pair):
     """Tokenizer + GraphRunner for draft and target (captures CUDA graphs, ~10-20 s)."""
-    from specrl.log_data import load_pair
+    from specrl.data.log_data import load_pair
 
     tok, draft, target = load_pair(pair)
     return tok, GraphRunner(draft), GraphRunner(target)

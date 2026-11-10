@@ -1,7 +1,7 @@
 """Build the prompt set: Alpaca (chat), HumanEval (code), GSM8K (math), split into train/test.
 
 Usage:
-    uv run python -m specrl.prompts            # writes data/prompts.jsonl (once; commit it)
+    uv run python -m specrl.data.prompts            # writes data/prompts.jsonl (once; commit it)
 
 Every row: {"id", "task", "split", "text"}. The file is committed so both PCs log the exact same prompts.
 """

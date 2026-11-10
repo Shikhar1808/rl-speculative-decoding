@@ -12,7 +12,7 @@ import torch
 import torch.nn.functional as F
 
 from specrl.algos.common import CONTINUE, STOP, feats, forced, mlp
-from specrl.env import SpecEnv
+from specrl.sim.env import SpecEnv
 
 
 def train(

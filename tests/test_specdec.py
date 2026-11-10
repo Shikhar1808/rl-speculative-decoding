@@ -11,11 +11,11 @@ position must be tiny (< TIE_GAP). A real bug (wrong acceptance or cache indexin
 import pytest
 import torch
 
-from specrl.baselines import fixed_k, threshold
-from specrl.log_data import encode, load_pair
-from specrl.prompts import load_prompts
-from specrl.fastmodel import GraphRunner
-from specrl.specdec import spec_generate, target_generate
+from specrl.sim.baselines import fixed_k, threshold
+from specrl.data.log_data import encode, load_pair
+from specrl.data.prompts import load_prompts
+from specrl.live.fastmodel import GraphRunner
+from specrl.live.specdec import spec_generate, target_generate
 
 pytestmark = pytest.mark.skipif(not torch.cuda.is_available(), reason="needs CUDA")
 N_PROMPTS = 20

@@ -12,7 +12,7 @@ starting at position `t` with `s` drafts accepts `n` = consecutive matches from 
 ## Step 1: prompts
 
 ```bash
-uv run python -m specrl.prompts        # -> data/prompts.jsonl (committed; already built)
+uv run python -m specrl.data.prompts        # -> data/prompts.jsonl (committed; already built)
 ```
 
 | Task | Source | Prompts | Test |
@@ -27,8 +27,8 @@ template at logging time.
 ## Step 2: logging
 
 ```bash
-uv run python -m specrl.log_data --pair qwen                  # all prompts, one PC
-uv run python -m specrl.log_data --pair smol --start 0 --end 250   # split across PCs
+uv run python -m specrl.data.log_data --pair qwen                  # all prompts, one PC
+uv run python -m specrl.data.log_data --pair smol --start 0 --end 250   # split across PCs
 ```
 
 Per prompt: `target.generate` (greedy, 128 new tokens), then one draft forward pass over prompt + answer.
@@ -45,7 +45,7 @@ other PC's `.npz` files into `logs/` before training.
 
 ## Step 3: the simulator
 
-`SpecEnv(episodes, lam, c)` in `src/specrl/env.py`, gym-like `reset()` / `step(a)`; MDP in
+`SpecEnv(episodes, lam, c)` in `src/specrl/sim/env.py`, gym-like `reset()` / `step(a)`; MDP in
 [02_mdp.md](02_mdp.md). `evaluate(policy, episodes, c)` runs a policy over all episodes and returns tokens,
 target calls, mean accepted length and the sim speedup.
 
@@ -54,7 +54,7 @@ Tests: `uv run pytest tests/test_env.py` (includes the guide's check: match `[1,
 ## Baselines in the simulator
 
 ```bash
-uv run python -m specrl.baselines --pair qwen --c <c from measure_c>
+uv run python -m specrl.sim.baselines --pair qwen --c <c from measure_c>
 ```
 
 Fixed k = 1..8 and threshold 0.4 → `results/sim_baselines_<pair>_<split>.csv`. The best fixed-k throughput

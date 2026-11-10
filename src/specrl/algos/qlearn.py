@@ -11,7 +11,7 @@ import random
 import numpy as np
 
 from specrl.algos.common import CONTINUE, Q_BINS, STOP, forced, tab_state
-from specrl.env import SpecEnv
+from specrl.sim.env import SpecEnv
 
 
 def train(episodes, lam, c, K, n_episodes=10000, alpha=0.05, eps_start=1.0, eps_end=0.05, seed=0, log_every=50, **_):

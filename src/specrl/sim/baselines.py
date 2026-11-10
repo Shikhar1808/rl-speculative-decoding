@@ -1,7 +1,7 @@
 """Non-RL baselines as policies `obs -> action` (0 = CONTINUE, 1 = STOP), plus a sim baseline table.
 
 Usage:
-    uv run python -m specrl.baselines --pair qwen --c 0.25
+    uv run python -m specrl.sim.baselines --pair qwen --c 0.25
 
 Prints the fixed-k (k=1..8) and threshold-0.4 results in the simulator and saves results/sim_baselines_<pair>.csv.
 The best fixed-k throughput is the starting lambda for training (docs/02_mdp.md).
@@ -12,7 +12,7 @@ import argparse
 import pandas as pd
 
 from specrl.config import K, PAIRS, RESULTS_DIR
-from specrl.env import CONTINUE, STOP, evaluate
+from specrl.sim.env import CONTINUE, STOP, evaluate
 
 
 def fixed_k(k):
@@ -37,11 +37,11 @@ def table(episodes, c):
 
 
 def main():
-    from specrl.log_data import load_logs
+    from specrl.data.log_data import load_logs
 
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--pair", choices=PAIRS, required=True)
-    ap.add_argument("--c", type=float, required=True, help="t_draft / t_target, from specrl.measure_c")
+    ap.add_argument("--c", type=float, required=True, help="t_draft / t_target, from specrl.live.measure_c")
     ap.add_argument("--split", default="test", choices=["train", "test"])
     a = ap.parse_args()
     df = table(load_logs(a.pair, a.split), a.c)

@@ -1,7 +1,7 @@
 """Turn results/*.csv into LaTeX tables and copy figures for the report (docs/07_report.md).
 
 Usage:
-    uv run python -m specrl.report_tables
+    uv run python -m specrl.analysis.report_tables
 Writes report/generated/*.tex (\\input by the report) and copies figures/*.png to report/figures/.
 Re-run after any new result, then upload report/generated and report/figures to Overleaf.
 """

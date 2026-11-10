@@ -8,9 +8,9 @@ store per answer token t:
 The simulator replays any stopping policy from these arrays without touching the GPU again.
 
 Usage:
-    uv run python -m specrl.log_data --pair qwen
-    uv run python -m specrl.log_data --pair smol --batch 8             # 8 prompts per GPU pass (default)
-    uv run python -m specrl.log_data --pair smol --start 0 --end 16   # a slice, e.g. for a quick test
+    uv run python -m specrl.data.log_data --pair qwen
+    uv run python -m specrl.data.log_data --pair smol --batch 8             # 8 prompts per GPU pass (default)
+    uv run python -m specrl.data.log_data --pair smol --start 0 --end 16   # a slice, e.g. for a quick test
 
 Output: logs/<pair>_<start>-<end>.npz  (load all parts of a pair with load_logs(pair))
 """
@@ -23,7 +23,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from specrl.config import LOG_DIR, MAX_NEW_TOKENS, PAIRS
-from specrl.prompts import load_prompts
+from specrl.data.prompts import load_prompts
 
 
 def load_pair(pair, device="cuda"):
@@ -130,7 +130,7 @@ def load_logs(pair, split=None):
     eps = []
     files = sorted(LOG_DIR.glob(f"{pair}_*.npz"))
     if not files:
-        raise FileNotFoundError(f"no logs for pair '{pair}' in {LOG_DIR}; run specrl.log_data first")
+        raise FileNotFoundError(f"no logs for pair '{pair}' in {LOG_DIR}; run specrl.data.log_data first")
     for f in files:
         z = np.load(f)
         o = z["offsets"]

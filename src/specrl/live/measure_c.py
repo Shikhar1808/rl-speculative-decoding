@@ -6,7 +6,7 @@ Both measured the way the live loop runs them (GraphRunner: StaticCache + CUDA g
 context, 3 warm-ups, CUDA-synchronised, median of 30 runs. The eager (no-graph) times are saved too.
 
 Usage:
-    uv run python -m specrl.measure_c --pair qwen
+    uv run python -m specrl.live.measure_c --pair qwen
 Writes results/c_<pair>.json. Use the same PC as the live benchmark.
 """
 
@@ -19,10 +19,10 @@ import torch
 from transformers import DynamicCache
 
 from specrl.config import PAIRS, RESULTS_DIR
-from specrl.log_data import encode, load_pair
-from specrl.prompts import load_prompts
-from specrl.fastmodel import GraphRunner
-from specrl.specdec import crop_to
+from specrl.data.log_data import encode, load_pair
+from specrl.data.prompts import load_prompts
+from specrl.live.fastmodel import GraphRunner
+from specrl.live.specdec import crop_to
 
 
 @torch.no_grad()

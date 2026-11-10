@@ -1,7 +1,7 @@
 # The MDP
 
 The agent decides, after each drafted token, whether to draft one more or send the round to the target.
-Code: `src/specrl/env.py`.
+Code: `src/specrl/sim/env.py`.
 
 | Part | Definition |
 |---|---|
@@ -27,7 +27,7 @@ Observation features:
 - `gained = min(n + 1, tokens left)`: accepted drafts plus the target's own token (correction or bonus),
   never past the answer's end.
 - `c = t_draft / t_target`: cost of one draft step relative to one target verify pass. Measured per model
-  pair with `uv run python -m specrl.measure_c --pair <pair>` → `results/c_<pair>.json`.
+  pair with `uv run python -m specrl.live.measure_c --pair <pair>` → `results/c_<pair>.json`.
 - `λ`: price of one target call, in tokens.
 
 ## Choosing λ (Dinkelbach)
@@ -35,7 +35,7 @@ Observation features:
 Maximising throughput `tokens / time` is the same as maximising `tokens − λ·time` when λ equals the best
 achievable throughput. Recipe:
 
-1. λ₀ = throughput of the best fixed-k baseline (`specrl.baselines` prints it).
+1. λ₀ = throughput of the best fixed-k baseline (`specrl.sim.baselines` prints it).
 2. Train with λ₀, measure the new throughput λ₁.
 3. Retrain once with λ₁.
 4. For the report, also sweep λ around that value.
@@ -49,5 +49,5 @@ target call, so the simulator's speedup estimate is
 sim_speedup = tokens / (target_calls + c · draft_steps)
 ```
 
-`specrl.env.evaluate(policy, episodes, c)` returns it along with the mean accepted length. The live benchmark
+`specrl.sim.env.evaluate(policy, episodes, c)` returns it along with the mean accepted length. The live benchmark
 (P6) checks whether this estimate ranks methods the same way as real timings.

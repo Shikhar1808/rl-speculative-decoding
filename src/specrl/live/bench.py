@@ -6,8 +6,8 @@ with CUDA synchronisation around each generation. Every method (target alone too
 CUDA-graph runners (fastmodel.GraphRunner), so the comparison measures speculation, not implementation. Correctness = output identical to the target alone.
 
 Usage:
-    uv run python -m specrl.bench --pair qwen                  # 30 test prompts, 3 warm-ups, 3 runs
-    uv run python -m specrl.bench --pair smol --prompts 15 --runs 2
+    uv run python -m specrl.live.bench --pair qwen                  # 30 test prompts, 3 warm-ups, 3 runs
+    uv run python -m specrl.live.bench --pair smol --prompts 15 --runs 2
 
 Outputs: results/live_<pair>_raw.csv (one row per run/prompt/method), results/live_<pair>.csv (summary),
          results/live_<pair>_by_task.csv
@@ -19,12 +19,12 @@ import time
 import pandas as pd
 import torch
 
-from specrl.baselines import fixed_k, threshold
+from specrl.sim.baselines import fixed_k, threshold
 from specrl.config import PAIRS, RESULTS_DIR
-from specrl.log_data import encode
-from specrl.prompts import load_prompts
-from specrl.specdec import load_fast_pair, spec_generate, target_generate
-from specrl.train import ALGOS, load_policy
+from specrl.data.log_data import encode
+from specrl.data.prompts import load_prompts
+from specrl.live.specdec import load_fast_pair, spec_generate, target_generate
+from specrl.algos.train import ALGOS, load_policy
 
 
 def methods_for(pair):

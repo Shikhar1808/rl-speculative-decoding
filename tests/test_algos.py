@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 
 from specrl.config import K
-from specrl.env import evaluate
-from specrl.train import ALGOS, best_fixed_k, to_policy
+from specrl.sim.env import evaluate
+from specrl.algos.train import ALGOS, best_fixed_k, to_policy
 
 
 def synthetic(n_eps=60, length=100, seed=0):

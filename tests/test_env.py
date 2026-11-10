@@ -1,7 +1,7 @@
 import numpy as np
 
-from specrl.baselines import fixed_k, threshold
-from specrl.env import CONTINUE, STOP, SpecEnv, evaluate
+from specrl.sim.baselines import fixed_k, threshold
+from specrl.sim.env import CONTINUE, STOP, SpecEnv, evaluate
 
 
 def ep(match, p=None):

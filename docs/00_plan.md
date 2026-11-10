@@ -36,7 +36,7 @@ big model verify. Output stays identical to the big model; generation gets faste
 
 ```
 setup/
-  PLAN.md                 this file
+  docs/00_plan.md         this file (was PLAN.md at the top level)
   README.md               how to install, run every step, reproduce results
   pyproject.toml uv.lock  uv project (commit both so PC2 gets the same env)
   docs/
