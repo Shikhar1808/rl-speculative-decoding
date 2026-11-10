@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from specrl!")
+"""RL agents that learn when to stop drafting in speculative decoding."""

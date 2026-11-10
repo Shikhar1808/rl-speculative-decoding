@@ -12,16 +12,13 @@ import shutil
 
 import pandas as pd
 
-from specrl.config import FIG_DIR, PAIRS, RESULTS_DIR, ROOT
+from specrl.config import ALGO_NAMES, FIG_DIR, PAIRS, RESULTS_DIR, ROOT
 
 OUT = ROOT / "report" / "generated"
 NAMES = {
     "target_alone": "Target alone",
     "threshold_0.4": "Threshold 0.4",
-    "vi": "Value Iteration",
-    "qlearn": "Q-learning",
-    "dqn": "DQN",
-    "reinforce": "REINFORCE",
+    **ALGO_NAMES,
 }
 RL = ["vi", "qlearn", "dqn", "reinforce"]
 

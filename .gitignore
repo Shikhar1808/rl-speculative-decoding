@@ -13,14 +13,9 @@ wheels/
 logs/old/
 logs/*.txt
 
-# LaTeX build output (if compiled locally)
-report/*.aux
-report/*.log
-report/*.out
-report/*.bbl
-report/*.blg
-report/*.pdf
+# Report sources live on Overleaf (and report_overleaf.zip), not in git
 report/
 
 # Private study notes (not part of the submission)
 VIVA_PREP.pdf
+DECISIONS.md

@@ -10,9 +10,13 @@ from specrl.env import CONTINUE, STOP
 Q_BINS = 10
 
 
+def q_bin(q):
+    return min(int(q * Q_BINS), Q_BINS - 1)
+
+
 def tab_state(obs):
     """Tabular state (s, q-bin): s in 1..K, q in 10 equal bins. 80 states."""
-    return int(round(obs[0] * K)), min(int(obs[3] * Q_BINS), Q_BINS - 1)
+    return int(round(obs[0] * K)), q_bin(obs[3])
 
 
 def feats(obs):
@@ -55,4 +59,4 @@ class NetPolicy:
         return int(self.net(torch.from_numpy(feats(obs))).argmax())
 
 
-__all__ = ["CONTINUE", "STOP", "Q_BINS", "tab_state", "feats", "forced", "mlp", "TablePolicy", "NetPolicy"]
+__all__ = ["CONTINUE", "STOP", "Q_BINS", "q_bin", "tab_state", "feats", "forced", "mlp", "TablePolicy", "NetPolicy"]

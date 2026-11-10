@@ -58,7 +58,7 @@ setup/
     bench.py              timings + correctness check → results/*.csv
     plots.py              all figures
     app.py                Gradio race demo
-  report/
+  report/                 (git-ignored since 10 Nov; lives on Overleaf)
     main.tex              report: abstract → conclusion, same sections as the proposal doc
     sections/*.tex        one file per section (easy to split among 3 people)
     references.bib        the 11 references from the proposal

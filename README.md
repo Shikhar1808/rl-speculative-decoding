@@ -10,7 +10,7 @@ Course project, Thapar Institute — Shikhar Saxena, Vaibhav Sundriyal, Angad Sh
 |---|---|
 | [docs/06_results.md](docs/06_results.md) | **All results**, how each algorithm works, the comparison |
 | [DECISIONS.md](DECISIONS.md) | Every decision and problem hit, with reasons — read this if something looks wrong |
-| [report/](report/) | LaTeX report + Beamer slides for Overleaf ([docs/07_report.md](docs/07_report.md)) |
+| Report | LaTeX report + Beamer slides, on Overleaf; not in git ([docs/07_report.md](docs/07_report.md)) |
 | [PLAN.md](PLAN.md) | Original plan and phases |
 | Proposal doc | https://claude.ai/artifact/Ng8gGdLpuKhmK7CWns2pqK |
 
@@ -59,7 +59,7 @@ src/specrl/
   app.py           Gradio race demo
 tests/        test_env.py, test_algos.py (CPU), test_specdec.py (GPU)
 docs/         one page per part of the system
-report/       LaTeX report + slides for Overleaf
+report/       LaTeX report + slides (local only, git-ignored; lives on Overleaf)
 data/ results/ figures/   committed     logs/ policies/   generated, not committed
 ```
 

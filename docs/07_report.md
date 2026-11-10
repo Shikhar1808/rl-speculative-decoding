@@ -1,6 +1,9 @@
 # The LaTeX report
 
-The report lives in `report/` and is compiled on **Overleaf** (no TeX is installed locally).
+The report is compiled on **Overleaf** (no TeX is installed locally). Its sources sit in a local `report/` folder
+that git ignores, so a fresh clone does not have it: get the files from the Overleaf project (Menu → Download →
+Source) or from `report_overleaf.zip`. `uv run python -m specrl.report_tables` still writes tables and figures into
+`report/`.
 
 ## Files
 
@@ -20,7 +23,7 @@ conflicts.
 
 ## Overleaf setup (once)
 
-1. Zip the `report/` folder.
+1. Zip the local `report/` folder (or use `report_overleaf.zip`).
 2. Overleaf → New Project → Upload Project → the zip.
 3. Menu → Compiler: **pdfLaTeX**. Main document: `main.tex`.
 4. Share → add the other two teammates as editors.
@@ -29,7 +32,7 @@ conflicts.
 
 Overleaf is the source of truth for **text**. This folder is the source of truth for **figures and result
 numbers**. When new figures are made: upload them to Overleaf's `figures/` folder (drag and drop). When text
-is edited on Overleaf: Menu → Download → Source, and copy `sections/` back here before committing.
+is edited on Overleaf: Menu → Download → Source, and copy `sections/` back into `report/` (not committed).
 
 (Overleaf's paid plan has git sync; the free plan needs the manual steps above.)
 

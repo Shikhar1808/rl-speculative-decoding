@@ -21,13 +21,13 @@ import gradio as gr
 import torch
 
 from specrl.baselines import fixed_k, threshold
-from specrl.config import PAIRS
+from specrl.config import ALGO_NAMES as NAMES
+from specrl.config import MAX_NEW_TOKENS, PAIRS
 from specrl.log_data import encode
 from specrl.specdec import load_fast_pair, spec_generate, target_generate
 from specrl.train import ALGOS, load_policy
 
 FRAME = 0.05  # seconds between replay frames
-NAMES = {"vi": "Value Iteration", "qlearn": "Q-learning", "dqn": "DQN", "reinforce": "REINFORCE"}
 BOX = ("font-family:ui-monospace,Consolas,monospace;font-size:14px;line-height:1.7;white-space:pre-wrap;"
        "padding:12px;border:1px solid #d8d7d2;border-radius:8px;min-height:260px;background:#fcfcfb;color:#0b0b0b")
 
@@ -96,6 +96,8 @@ def build(pair):
     def race(prompt, method):
         if not prompt.strip():
             raise gr.Error("Type a prompt first.")
+        if encode(tok, prompt).shape[1] + MAX_NEW_TOKENS > target.max_len:
+            raise gr.Error(f"Prompt too long: keep it under about {target.max_len - MAX_NEW_TOKENS} tokens.")
         t_toks, t_times, rounds, r_times = record(prompt, policies[method])
         end = max(t_times[-1], r_times[-1])
         start = time.perf_counter()

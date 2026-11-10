@@ -18,9 +18,10 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import torch  # noqa: E402
 
-from specrl.algos.common import Q_BINS, feats  # noqa: E402
+from specrl.algos.common import Q_BINS, forced, tab_state  # noqa: E402
 from specrl.algos import vi  # noqa: E402
 from specrl.baselines import baseline_policies  # noqa: E402
+from specrl.config import ALGO_NAMES as NAMES  # noqa: E402
 from specrl.config import FIG_DIR, K, PAIRS, POLICY_DIR, RESULTS_DIR  # noqa: E402
 from specrl.env import SpecEnv, evaluate  # noqa: E402
 from specrl.log_data import load_logs  # noqa: E402
@@ -28,7 +29,6 @@ from specrl.train import ALGOS, load_policy, read_c, to_policy  # noqa: E402
 
 # reference categorical palette (dataviz skill), fixed slot per algorithm
 COL = {"vi": "#2a78d6", "qlearn": "#eb6834", "dqn": "#1baf7a", "reinforce": "#6250d6"}
-NAMES = {"vi": "Value Iteration", "qlearn": "Q-learning", "dqn": "DQN", "reinforce": "REINFORCE"}
 GREY, GREY_D, INK, INK2 = "#b9b8b2", "#7d7c76", "#0b0b0b", "#52514e"
 
 plt.rcParams.update(
@@ -106,10 +106,10 @@ def policy_grid(pair, algo, episodes, min_visits=20):
         obs, done = env.reset(ep), False
         while not done:
             a = pol(obs)
-            if not (env.s >= env.K or env.t + env.s >= env.end):
-                s_, b = int(round(obs[0] * K)) - 1, min(int(obs[3] * Q_BINS), Q_BINS - 1)
-                n[s_, b] += 1
-                stop[s_, b] += a
+            if not forced(env):
+                s_, b = tab_state(obs)
+                n[s_ - 1, b] += 1
+                stop[s_ - 1, b] += a
             obs, _, done, _ = env.step(a)
     with np.errstate(invalid="ignore", divide="ignore"):
         return np.where(n >= min_visits, stop / n, np.nan)

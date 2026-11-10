@@ -71,7 +71,7 @@ class GraphRunner:
         if L in self.graphs:
             self.ids[L].copy_(chunk)
             self.graphs[L].replay()
-            return self.out[L]  # graph output buffer: valid until the next replay of this length
+            return self.out[L]  # graph output buffer: valid until the next replay of any length (shared memory pool)
         return self._forward(chunk, torch.arange(L, device=chunk.device))
 
     def crop(self, n):

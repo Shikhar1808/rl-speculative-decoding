@@ -9,11 +9,8 @@ then iterate the Bellman optimality update until it stops changing:
 
 import numpy as np
 
-from specrl.algos.common import Q_BINS, STOP, CONTINUE
-
-
-def _bin(q):
-    return min(int(q * Q_BINS), Q_BINS - 1)
+from specrl.algos.common import CONTINUE, Q_BINS, STOP
+from specrl.algos.common import q_bin as _bin
 
 
 def estimate_model(episodes, lam, c, K):

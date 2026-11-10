@@ -17,6 +17,8 @@ PAIRS = {
     "smol": ("HuggingFaceTB/SmolLM2-135M-Instruct", "HuggingFaceTB/SmolLM2-1.7B-Instruct"),
 }
 
+ALGO_NAMES = {"vi": "Value Iteration", "qlearn": "Q-learning", "dqn": "DQN", "reinforce": "REINFORCE"}
+
 K = 8  # max draft tokens per round; STOP is forced at s = K
 MAX_NEW_TOKENS = 128  # answer length per prompt
 SEED = 0
